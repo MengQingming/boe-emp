@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.AreaDao">
+    
+	<sql id="areaColumns">
+		A.ID AS "id",
+		A.PARENT_ID AS "parent.id",
+		A.AREA_CODE as "code",
+		A.AREA_NAME as "name",
+		A.DISPLAY_ORDER as "displayOrder",
+		A.AREA_TYPE as "type",
+		A.REMARKS as "remarks",
+		A.CREATE_BY AS "createBy.id",
+		A.CREATION_DATE as "createDate",
+		A.UPDATE_BY AS "updateBy.id",
+		A.LAST_UPDATE_DATE AS "updateDate",
+		A.AREA_PATH AS "path",
+		A.STATUS AS "status",
+		A.DEL_FLAG AS "delFlag",
+		A.AREA_LEVEL AS "level",
+		A.AREA_TAG AS "areaTag",
+		A.AREA_CATEGORY AS "category",
+		A.COMPANY_ID AS "companyId",
+		A.COMPANY_NAME AS "companyName",
+		A.COMPANY_NO AS  "companyNo",
+		A.AREA_FULLNAME AS "fullname",
+		A.ATTRIBUTE1 AS "attribute1",
+		A.ATTRIBUTE2 AS "attribute2",
+		A.ATTRIBUTE3 AS "attribute3",
+		A.ATTRIBUTE4 AS "attribute4",
+		A.ATTRIBUTE5 AS "attribute5",
+		A.ATTRIBUTE6 AS "attribute6",
+		A.ATTRIBUTE7 AS "attribute7",
+		A.ATTRIBUTE8 AS "attribute8",
+		A.ATTRIBUTE9 AS "attribute9",
+		A.ATTRIBUTE10 AS "attribute10"
+	</sql>
+	
+	<sql id="areaJoins">
+		LEFT JOIN sys_area p ON p.id = a.parent_id
+    </sql>
+    
+	<select id="get" resultType="Area">
+		SELECT
+			<include refid="areaColumns"/>
+		FROM sys_area a
+		<include refid="areaJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Area">
+		SELECT
+			<include refid="areaColumns"/>
+		FROM sys_area a
+		<include refid="areaJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		OR a.id = #{currentUser.group.area.id}
+		ORDER BY a.area_code
+	</select>
+	
+	<select id="findAllList" parameterType="Area" resultType="Area">
+		SELECT
+			<include refid="areaColumns"/>
+		FROM sys_area a
+		<include refid="areaJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+			  AND a.parent_id = #{parent.id}
+			  <if test="companyId != null and companyId != ''">
+			  	AND a.company_id = #{companyId}
+			  </if>
+		ORDER BY a.DISPLAY_ORDER ASC
+	</select>
+	
+	<select id="findByParentIdsLike" resultType="Area">
+		SELECT
+			a.id,
+			a.parent_id AS "parent.id"
+		FROM sys_area a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.area_code
+	</select>
+	<!-- <selectKey keyProperty="id" resultType="int" order="BEFORE">  
+	    	select SEQ_AREA.NEXTVAL from dual  
+	    </selectKey> -->
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">  
+	    	select SEQ_SYS_AREA.NEXTVAL from dual  
+	    </selectKey>
+		INSERT INTO sys_area(
+			ID, 
+			PARENT_ID, 
+			AREA_CODE, 
+			AREA_NAME, 
+			DISPLAY_ORDER,
+			AREA_TYPE, 
+			CREATE_BY, 
+			CREATION_DATE, 
+			UPDATE_BY, 
+			LAST_UPDATE_DATE, 
+			REMARKS,
+			STATUS,
+			AREA_PATH,
+			del_flag,
+			AREA_LEVEL,
+			AREA_TAG,
+			AREA_CATEGORY,
+			COMPANY_ID,
+			COMPANY_NO,
+			COMPANY_NAME,
+			AREA_FULLNAME,
+			ATTRIBUTE1,
+			ATTRIBUTE2,
+			ATTRIBUTE3,
+			ATTRIBUTE4,
+			ATTRIBUTE5,
+			ATTRIBUTE6,
+			ATTRIBUTE7,
+			ATTRIBUTE8,
+			ATTRIBUTE9,
+			ATTRIBUTE10
+		) VALUES (
+			#{id}, 
+			#{parent.id}, 
+			#{code}, 
+			#{name}, 
+			#{displayOrder}, 
+			#{type}, 
+			#{createBy.id}, 
+			#{createDate}, 
+			#{updateBy.id}, 
+			#{updateDate}, 
+			#{remarks},
+			#{status},
+			(#{path}||#{id}), 
+			#{delFlag},
+			#{level},
+			#{areaTag},
+			#{category},
+			#{companyId},
+			#{companyNo},
+			#{companyName},
+			#{fullname},
+			#{attribute1},
+			#{attribute2},
+			#{attribute3},
+			#{attribute4},
+			#{attribute5},
+			#{attribute6},
+			#{attribute7},
+			#{attribute8},
+			#{attribute9},
+			#{attribute10}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE SYS_AREA SET 
+			PARENT_ID = #{parent.id}, 
+			AREA_CODE = #{code}, 
+			AREA_NAME = #{name}, 
+			DISPLAY_ORDER = #{displayOrder}, 
+			AREA_TYPE = #{type}, 
+			UPDATE_BY = #{updateBy.id}, 
+			LAST_UPDATE_DATE = #{updateDate},
+			AREA_PATH = #{path},
+			STATUS = #{status},
+			REMARKS = #{remarks},
+			AREA_LEVEL = #{level},
+			AREA_TAG = #{areaTag},
+			AREA_CATEGORY = #{category},
+			AREA_FULLNAME = #{fullname},
+			ATTRIBUTE1 = #{attribute1},
+			ATTRIBUTE2 = #{attribute2},
+			ATTRIBUTE3 = #{attribute3},
+			ATTRIBUTE4 = #{attribute4},
+			ATTRIBUTE5 = #{attribute5},
+			ATTRIBUTE6 = #{attribute6},
+			ATTRIBUTE7 = #{attribute7},
+			ATTRIBUTE8 = #{attribute8},
+			ATTRIBUTE9 = #{attribute9},
+			ATTRIBUTE10 = #{attribute10}
+		WHERE ID = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE sys_area SET 
+			parent_id = #{parent.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_area SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} 
+	</update>
+<!-- 	OR parent_ids LIKE  -->
+<!-- 					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if> -->
+<!-- 					<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if> -->
+<!-- 					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if> -->
+	<select id="findListByPrentId" resultType="area">
+		SELECT
+			<include refid="areaColumns"/>
+		FROM 
+			SYS_AREA a
+		WHERE 
+			a.parent_id = #{parent.id} AND a.del_flag = '1'
+		ORDER BY a.DISPLAY_ORDER ASC
+	</select>
+	<select id="findListByTreeBox" parameterType="Area" resultType="Area">
+		SELECT
+			<include refid="areaColumns"/>
+		FROM sys_area a
+		LEFT JOIN sys_area p ON p.id = a.parent_id
+		WHERE a.del_flag = '1'
+		<if test="companyId != null and companyId != ''">
+			AND a.company_id = #{companyId}
+		</if>
+		ORDER BY a.DISPLAY_ORDER ASC
+	</select>
+    <select id="findByAreaCode" resultType="Area">
+        SELECT
+        <include refid="areaColumns"/>
+        FROM sys_area a
+        <include refid="areaJoins"/>
+        WHERE a.area_code = #{0}
+        and a.company_id = #{1}
+    </select>
+	<select id="getAreaByName" resultType="Area">
+		SELECT
+		<include refid="areaColumns"/>
+		FROM sys_area a
+		WHERE a.del_flag = '1' AND a.AREA_NAME like #{0}||'%'
+	</select>
+	<select id="getTopArea" resultType="Area">
+		SELECT
+		*
+		FROM
+		(
+		SELECT
+		<include refid="areaColumns"/>
+		FROM
+		SYS_AREA A
+		WHERE
+		A.COMPANY_ID = #{0}
+		ORDER BY
+		AREA_CODE ASC
+		) WHERE ROWNUM = 1
+	</select>
+</mapper>

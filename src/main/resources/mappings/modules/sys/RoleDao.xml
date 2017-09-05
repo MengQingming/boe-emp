@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.RoleDao">
+
+	<resultMap id="roleResult" type="Role">
+		<id property="id" column="id" />
+		<result property="roleName" column="role_name" />
+		<result property="roleType" column="role_type" />
+		<result property="dataScope" column="data_scope" />
+		<result property="remarks" column="remarks" />
+		<result property="status" column="status" />
+		<result property="displayOrder" column="display_order" />
+		<result property="roleNo" column="role_no" /><!-- <collection property="userList" 
+			ofType="User"> <id property="id" column="userList.id" /> <id property="loginName" 
+			column="userList.loginName" /> <id property="name" column="userList.name" 
+			/> <id property="email" column="userList.email" /> <id property="phone" column="userList.phone" 
+			/> <id property="mobile" column="userList.mobile" /> <id property="office.name" 
+			column="userList.office.name" /> <id property="company.name" column="userList.company.name" 
+			/> </collection> -->
+		<collection property="menuList" ofType="Menu">
+			<id property="id" column="menuList.id" />
+		</collection>
+		<collection property="groupList" ofType="Group">
+			<id property="id" column="groupList.id" />
+		</collection>
+	</resultMap>
+
+	<sql id="roleColumns">
+		a.id,
+		a.group_id AS "group.id",
+		a.group_no AS "group.groupNo",
+		a.role_no,
+		a.role_name,
+		a.role_type,
+		a.data_scope AS dataScope,
+		a.display_order AS displayOrder,
+		a.remarks,
+		a.create_by AS "createBy.id",
+		a.creation_date,
+		a.update_by AS "updateBy.id",
+		a.last_update_date,
+		a.del_flag,
+		a.status,
+		o.group_name AS "group.groupName",
+		a.company_id AS "company.id",
+		a.company_name AS "company.companyName",
+		a.company_no AS "company.companyNo"
+	</sql>
+
+	<select id="get" resultMap="roleResult">
+		SELECT
+		<include refid="roleColumns" />,
+		rm.menu_id AS "menuList.id"
+		FROM sys_role a
+		left JOIN sys_group o ON o.id = a.group_id
+		LEFT JOIN sys_role_menu rm ON rm.role_id = a.id
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="getByName" resultType="Role">
+		SELECT
+		<include refid="roleColumns" />
+
+		FROM sys_role a
+		
+		JOIN sys_group o ON o.id = a.group_id
+
+		WHERE
+		a.role_name = #{roleName} AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+	
+	<select id="getRoleByRoleNo" resultType="Role">
+		SELECT
+		<include refid="roleColumns" />
+
+		FROM sys_role a
+		
+		JOIN sys_group o ON o.id = a.group_id
+
+		WHERE
+		a.ROLE_NO = #{roleNo} AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+
+	<select id="getById" resultType="Role">
+		SELECT
+		<include refid="roleColumns" />
+		FROM sys_role a
+		JOIN sys_group o ON o.id = a.group_id
+		WHERE
+		a.id = #{id} AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+
+	<select id="findList" resultType="Role">
+		SELECT <!-- DISTINCT -->
+		<include refid="roleColumns" />
+		FROM sys_role a
+		LEFT JOIN sys_group o ON o.id = a.group_id
+		LEFT JOIN sys_user_role ur ON ur.role_id = a.id
+		LEFT JOIN sys_user u ON u.id = ur.user_id
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND
+		a.status=#{status}
+		<if test="user != null and user.id != null and user.id != ''">
+			AND u.id = #{user.id}
+		</if>
+		<if test="user != null and user.userName != null and user.userName != ''">
+			AND u.user_name = #{user.userName}
+		</if>
+		<if test="!currentUser.admin">
+			AND a.company_id = #{currentUser.company.id}
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+			ORDER BY o.group_no, a.role_name
+	</select>
+
+	<select id="findAllList" resultType="Role">
+		SELECT
+		<include refid="roleColumns" />
+		FROM sys_role a
+		LEFT JOIN sys_group o ON o.id = a.group_id
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="!currentUser.admin">
+			AND a.company_id = #{currentUser.company.id}
+		</if>
+		ORDER BY o.group_no, a.role_name
+	</select>
+
+	<insert id="insert">
+
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select
+			SEQ_ROLE.NEXTVAL from dual
+		</selectKey>
+
+		INSERT INTO sys_role(
+		id,
+		group_id,
+		group_no,
+		company_id,
+		company_no,
+		company_name,
+		role_no,
+		role_name,
+		role_type,
+		data_scope,
+		remarks,
+		create_by,
+		update_by,
+		status,
+		display_order
+		) VALUES
+		(
+		#{id},
+		#{group.id},
+		#{group.groupNo},
+		#{company.id},
+		#{company.companyNo},
+		#{company.companyName},
+		#{roleNo},
+		#{roleName},
+		#{roleType},
+		#{dataScope},
+		#{remarks},
+		#{createBy.id},
+		#{updateBy.id},
+		#{status},
+		#{displayOrder}
+		)
+	</insert>
+
+	<update id="update">
+
+		UPDATE sys_role SET
+		group_id = #{group.id},
+		group_no = #{group.groupNo},
+		role_no= #{roleNo},
+		role_name = #{roleName},
+		role_type = #{roleType},
+		data_scope = #{dataScope},
+		display_order = #{displayOrder},
+		update_by = #{updateBy.id},
+		last_update_date = #{lastUpdateDate},
+		remarks = #{remarks},
+		status = #{status}
+		WHERE id =
+		#{id}
+	</update>
+
+	<delete id="deleteRoleMenu">
+		DELETE FROM sys_role_menu WHERE role_id = #{id}
+	</delete>
+
+    <insert id="insertRoleMenu"> 
+		
+		INSERT INTO sys_role_menu (id,role_id,menu_id)
+		
+		select SEQ_ROLE_MENU.NEXTVAL AS VALUE,A.* FROM(
+		
+		<foreach collection="menuList" item="menu" separator=" union all ">
+			SELECT #{id},#{menu.id} FROM dual
+		</foreach>
+		
+		) A
+	</insert>
+
+	<update id="delete">
+		UPDATE sys_role SET
+		del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

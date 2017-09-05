@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.SysMessageHisDao">
+
+	<!-- 通用查询结果列 -->
+	<sql id="MessageHisColumn">
+		a.ID,
+		a.APP_NO AS appNo,
+		a.COMPANY_ID AS companyId,
+		a.COMPANY_NO AS companyNo,
+		a.COMPANY_NAME AS companyName,
+		a.REQUEST_ID AS requestId,
+		a.SENDER_ID AS senderId,
+		a.SENDER_NUM AS senderNum,
+		a.SENDER_NAME AS senderName,
+		a.SENDER_TOOL AS senderTool,
+		a.DIST_TYPE AS distType,
+		a.DIST_LIST AS distList,
+		a.MSG_TITLE AS msgTitle,
+		a.MSG_BODY AS msgBody,
+		a.HAS_ATTACHEMENT AS hasAttachement,
+		a.ATTACHFILE_PATH AS attachfilePath,
+		a.SEND_STATUS AS sendStatus,
+		a.SEND_TIME AS sendTime,
+		a.SEND_LOG AS sendLog,
+		a.MAX_TRY_TIMES AS maxTryTimes,
+		a.CURR_TRY_TIMES AS currTryTimes,
+		a.READ_STATUS AS readStatus,
+		a.READ_TIME AS readTime,
+		a.STATUS,
+		a.DATA_SOURCE AS dataSource,
+		a.DATA_SOURCE_KEY AS dataSourceKey,
+		a.CREATION_DATE AS creationDate,
+		a.LAST_UPDATE_DATE AS lastUpdateDate
+	</sql>
+	<select id="findList" resultType="SysMessageHis">
+		SELECT
+		<include refid="MessageHisColumn" />
+		FROM sys_message a
+		WHERE 1=1
+		<!--所属公司 -->
+		<if test="companyId != null and companyId!=''">
+			AND a.company_id = #{companyId}
+		</if>
+		<!--短信类型 在线 site 短信 sms 邮件 email -->
+		<if test="distType != null and distType!=''">
+			AND a.dist_type = #{distType}
+		</if>
+		<!--发送人ID -->
+		<if test="senderId != null and senderId!=''">
+			AND a.sender_id = #{senderId}
+		</if>
+		<!--接收信息账号 -->
+		<if test="senderId != null and senderId!=''">
+			AND a.request_id = #{requestId}
+		</if>
+		<!--短信发送状态 -->
+		<if test="senderId != null and senderId!=''">
+			AND a.send_status = #{sendStatus}
+		</if>
+		<!--短信读取状态 -->
+		<if test="readStatus != null and readStatus!=''">
+			AND a.read_status = #{readStatus}
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.creation_date desc
+			</otherwise>
+		</choose>
+	</select>
+
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select
+			SEQ_MESSAGE_HIS.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO sys_message_his(
+		ID,
+		APP_NO,
+		COMPANY_ID,
+		COMPANY_NO,
+		COMPANY_NAME,
+		REQUEST_ID,
+		SENDER_ID,
+		SENDER_NUM,
+		SENDER_NAME,
+		SENDER_TOOL,
+		DIST_TYPE,
+		DIST_LIST,
+		MSG_TITLE,
+		MSG_BODY,
+		HAS_ATTACHEMENT,
+		ATTACHFILE_PATH,
+		SEND_STATUS,
+		SEND_TIME,
+		SEND_LOG,
+		MAX_TRY_TIMES,
+		CURR_TRY_TIMES,
+		READ_STATUS,
+		READ_TIME,
+		STATUS,
+		DATA_SOURCE,
+		DATA_SOURCE_KEY
+		)VALUES(
+		#{id},
+		#{appNo},
+		#{companyId},
+		#{companyNo},
+		#{companyName},
+		#{requestId},
+		#{senderId},
+		#{senderNum},
+		#{senderName},
+		#{senderTool},
+		#{distType},
+		#{distList},
+		#{msgTitle},
+		#{msgBody},
+		#{hasAttachement},
+		#{attachfilePath},
+		#{sendStatus},
+		#{sendTime},
+		#{sendLog},
+		#{maxTryTimes},
+		#{currTryTimes},
+		#{readStatus},
+		#{readTime},
+		#{status},
+		#{dataSource},
+		#{dataSourceKey}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_message_his SET
+		SEND_STATUS = #{sendStatus},
+		READ_STATUS = #{readStatus}
+		WHERE ID=#{id}
+	</update>
+</mapper>

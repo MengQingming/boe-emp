@@ -1,0 +1,21 @@
+body {
+  overflow-x: hidden; }
+
+.css-head {
+  padding-top: 60px; }
+
+.css-controls span {
+  width: 20%;
+  display: inline-block; }
+
+#nameImagePreview {
+  margin-right: 46px;
+  float: left; }
+
+#groupButton {
+  margin-left: 0; }
+
+.control-group .css-radio {
+  padding-top: 0; }
+
+/*# sourceMappingURL=bundle.css.map*/

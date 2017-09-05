@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.GroupDao">
+
+	<sql id="groupColumns">
+		a.id,
+		a.group_no AS "groupNo",
+		a.group_name AS "groupName",
+		a.parent_id AS "parent.id",
+		a.group_short_name AS "groupShortName",
+		a.display_order AS "displayOrder",
+		a.remarks,
+		a.group_path AS "groupPath",
+		a.group_layer AS "groupLayer",
+		a.group_Type AS "groupType",
+		a.area_id AS "area.id",
+		a.has_child AS "hasChild",
+		a.status,
+		a.start_date AS "startDate",
+		a.end_date AS "endDate",
+		a.del_flag AS "delFlag",
+		a.attribute1,
+		a.attribute2,
+		a.attribute3,
+		a.attribute4,
+		a.attribute5,
+		a.attribute6,
+		a.attribute7,
+		a.attribute8,
+		a.attribute9,
+		a.attribute10,
+		a.data_source AS "dataSource",
+		a.data_source_key AS "dataSourceKey",
+		a.last_sync_date AS "lastSyncDate",
+		a.creation_date AS "creationDate",
+		a.last_update_date AS "lastUpdateDate",
+		p.group_no AS "parent.groupNo",
+		p.group_name AS "parent.groupName",
+		ar.area_name AS "area.name",
+		a.company_id AS "companyId",
+		a.company_no AS "companyNo",
+		a.company_name AS "companyName",
+		a.BUSINESS_LINE_CODE AS "businessLineCode",
+		a.BUSINESS_LINE_NAME AS "businessLineName",
+		a.CC_GROUP AS "ccGroup",
+		a.DIRECTOR_ID AS directorId, 
+		a.DIRECTOR_NUM AS directorNum, 
+		a.DIRECTOR_NAME AS directorName,
+		a.MANAGER_ID AS managerId, 
+		a.MANAGER_NUM AS managerNum, 
+		a.MANAGER_NAME AS managerName
+	</sql>
+	
+	<sql id="groupColumns2">
+		a.id,
+		a.group_no AS "groupNo",
+		a.group_name AS "groupName",
+		a.parent_id AS "parent.id",
+		a.group_short_name AS "groupShortName",
+		a.display_order AS "displayOrder",
+		a.remarks,
+		a.group_path AS "groupPath",
+		a.group_layer AS "groupLayer",
+		a.group_Type AS "groupType",
+		a.area_id AS "area.id",
+		a.has_child AS "hasChild",
+		a.status,
+		a.start_date AS "startDate",
+		a.end_date AS "endDate",
+		a.del_flag AS "delFlag",
+		a.attribute1,
+		a.attribute2,
+		a.attribute3,
+		a.attribute4,
+		a.attribute5,
+		a.attribute6,
+		a.attribute7,
+		a.attribute8,
+		a.attribute9,
+		a.attribute10,
+		a.data_source AS "dataSource",
+		a.data_source_key AS "dataSourceKey",
+		a.last_sync_date AS "lastSyncDate",
+		a.creation_date AS "creationDate",
+		a.last_update_date AS "lastUpdateDate",
+		a.company_id AS "companyId",
+		a.company_no AS "companyNo",
+		a.company_name AS "companyName",
+		a.BUSINESS_LINE_CODE AS "businessLineCode",
+		a.BUSINESS_LINE_NAME AS "businessLineName",
+		a.CC_GROUP AS "ccGroup",
+		a.DIRECTOR_ID AS directorId, 
+		a.DIRECTOR_NUM AS directorNum, 
+		a.DIRECTOR_NAME AS directorName,
+		a.MANAGER_ID AS managerId, 
+		a.MANAGER_NUM AS managerNum, 
+		a.MANAGER_NAME AS managerName
+	</sql>
+	
+	<sql id="groupJoins">
+		LEFT JOIN sys_group p ON p.id = a.parent_id
+		LEFT JOIN sys_area ar ON ar.id = a.area_id
+		<!-- LEFT JOIN SYS_USER pp ON pp.id = a.primary_person
+		LEFT JOIN SYS_USER dp ON dp.id = a.deputy_person -->
+    </sql>
+	
+	<select id="get" resultType="Group">
+		SELECT
+		<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getByGroupNo" resultType="Group">
+		SELECT
+		<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.group_no = #{groupNo}
+	</select>
+	
+	<select id="queryChilds" resultType="Group">
+		SELECT
+		<include refid="groupColumns"/>
+		FROM sys_group a  
+		<include refid="groupJoins"/> 
+		WHERE a.parent_id = #{0}
+	</select>
+	
+	<select id="findList" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="companyId != null and companyId != ''">
+			AND a.company_id = #{companyId}
+		</if>
+		AND a.parent_id = #{parent.id}
+		AND a.status = #{DEL_FLAG_NORMAL}
+		ORDER BY a.group_no
+	</select>
+	
+	<select id="findListByPeriod" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE 1=1
+		
+		<if test="startDate != null and startDate != ''">
+			AND a.LAST_SYNC_DATE <![CDATA[>=]]>#{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND a.LAST_SYNC_DATE <![CDATA[<=]]>#{endDate}
+		</if>
+	</select>
+	
+	<select id="findListByGroup" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		
+		<if test="groupNo != null and groupNo != ''">
+			AND a.group_no = #{groupNo}
+		</if>
+		<if test="companyId != null and companyId != ''">
+			AND a.company_id = #{companyId}
+		</if>
+		<if test="groupType != null and groupType != ''">
+			AND a.group_type = #{groupType}
+		</if>
+		<if test="businessLineCode != null and businessLineCode != ''">
+			AND a.business_line_code = #{businessLineCode}
+		</if>
+		<if test="status != null and status != ''">
+			AND a.status = #{DEL_FLAG_NORMAL}
+		</if>
+		ORDER BY a.group_no
+	</select>
+			
+	<select id="findListByTreeBox" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="companyId != null">
+			AND a.company_id = #{companyId} AND a.STATUS = '1'
+		</if>
+		ORDER BY a.group_no
+	</select>		
+	
+	<select id="findAllList" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="companyId != null and companyId != ''">
+			AND a.company_id = #{companyId}
+		</if>
+		AND a.parent_id = #{parent.id}
+		ORDER BY a.area_id
+	</select>
+	
+	
+	<select id="findListByPrentId" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.parent_id = #{parent.id} AND a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.group_no
+	</select>	
+	
+	<!-- 查询当前group的子级组织集合 -->
+	<select id="findChildrenById" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.parent_id = #{0} AND a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.group_no
+	</select>	
+	
+	<select id="findByParentIdsLike" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND a.group_path LIKE #{groupPath} AND a.COMPANY_ID= #{companyId}
+		ORDER BY a.area_id
+	</select>
+
+	<select id="getByUserIdGroupId" resultType="Group">
+		SELECT
+		T.GROUP_NO as
+		groupNo,
+		T.CC_GROUP as ccGroup,
+		T.GROUP_PATH as groupPath
+		FROM SYS_GROUP T, SYS_USER_GROUP TT
+		WHERE
+		T.ID = TT.GROUP_ID
+		AND
+		TT.USER_ID = #{0}
+		AND
+		TT.GROUP_ID = #{1}
+	</select>
+	
+	<select id="findByPathLike" resultType="Group">
+		SELECT
+			<include refid="groupColumns"/>
+		FROM sys_group a
+		<include refid="groupJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND a.group_path LIKE #{groupPath}||'%' AND a.COMPANY_ID= #{companyId}
+		<if test="groupType != null and groupType != ''">
+			AND a.group_type = #{groupType}
+		</if>
+		ORDER BY a.area_id
+	</select>
+	
+	<select id="findChildRenByPrentGroup" resultType="Group">
+		SELECT 
+			<include refid="groupColumns2"/> 
+		FROM SYS_GROUP a  where a.group_type='company' 
+		AND a.business_line_code =(select t.business_line_code FROM SYS_GROUP t where t.id=#{id})
+	</select>
+	
+	<insert id="insert">
+	    <selectKey keyProperty="id" resultType="int" order="BEFORE">  
+	    	select SEQ_GROUP.NEXTVAL from dual  
+	    </selectKey>
+	     
+		INSERT INTO sys_group(
+			id,
+			group_no,
+			group_name,
+			group_short_name,
+			display_order,
+			remarks,
+			group_path,
+			group_layer,
+			group_Type,
+			area_id,
+			has_child,
+			status,
+			start_date,
+			end_date,
+			del_flag,
+			attribute1,
+			attribute2,
+			attribute3,
+			attribute4,
+			attribute5,
+			attribute6,
+			attribute7,
+			attribute8,
+			attribute9,
+			attribute10,
+			data_source,
+			data_source_key,
+			last_sync_date,
+			creation_date,
+			last_update_date,
+			parent_id,
+			company_id,
+			company_no,
+			company_name,
+			BUSINESS_LINE_CODE,
+			BUSINESS_LINE_NAME,
+			CC_GROUP,
+			DIRECTOR_ID, 
+			DIRECTOR_NUM, 
+			DIRECTOR_NAME,
+			MANAGER_ID,
+			MANAGER_NUM, 
+			MANAGER_NAME
+		) VALUES (
+			#{id},
+			#{groupNo},
+			#{groupName},
+			#{groupShortName},
+			#{displayOrder},
+			#{remarks},
+			#{groupPath},
+			#{groupLayer},
+			#{groupType},
+			#{area.id},
+			#{hasChild},
+			#{status},
+			#{startDate},
+			#{endDate},
+			#{delFlag},
+			#{attribute1},
+			#{attribute2},
+			#{attribute3},
+			#{attribute4},
+			#{attribute5},
+			#{attribute6},
+			#{attribute7},
+			#{attribute8},
+			#{attribute9},
+			#{attribute10},
+			#{dataSource},
+			#{dataSourceKey},
+			#{lastSyncDate},
+			#{creationDate},
+			#{lastUpdateDate},
+			#{parent.id},
+			#{companyId},
+			#{companyNo},
+			#{companyName},
+			#{businessLineCode},
+			#{businessLineName},
+			#{ccGroup},
+			#{directorId}, 
+			#{directorNum}, 
+			#{directorName},
+			#{managerId}, 
+			#{managerNum}, 
+			#{managerName}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_group SET 
+			group_no = #{groupNo},
+			group_name = #{groupName},
+			parent_id = #{parent.id},
+			group_short_name = #{groupShortName},
+			display_order = #{displayOrder},
+			remarks = #{remarks},
+			group_path = #{groupPath},
+			group_layer = #{groupLayer},
+			group_Type = #{groupType},
+			area_id = #{area.id},
+			has_child = #{hasChild},
+			status = #{status},
+			start_date = #{startDate},
+			end_date = #{endDate},
+			del_flag = #{delFlag},
+			attribute1 = #{attribute1},
+			attribute2 = #{attribute2},
+			attribute3 = #{attribute3},
+			attribute4 = #{attribute4},
+			attribute5 = #{attribute5},
+			attribute6 = #{attribute6},
+			attribute7 = #{attribute7},
+			attribute8 = #{attribute8},
+			attribute9 = #{attribute9},
+			attribute10 = #{attribute10},
+			data_source = #{dataSource},
+			data_source_key = #{dataSourceKey},
+			last_sync_date = #{lastSyncDate},
+			last_update_date = #{lastUpdateDate},
+			company_id = #{companyId},
+			company_no = #{companyNo},
+			company_name= #{companyName},
+			BUSINESS_LINE_CODE= #{businessLineCode},
+			BUSINESS_LINE_NAME= #{businessLineName},
+			CC_GROUP=#{ccGroup},
+			DIRECTOR_ID=#{directorId},
+			DIRECTOR_NUM=#{directorNum}, 
+			DIRECTOR_NAME=#{directorName},
+			MANAGER_ID=#{managerId}, 
+			MANAGER_NUM=#{managerNum}, 
+			MANAGER_NAME =#{managerName}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE sys_group SET 
+			parent_id = #{parent.id}, 
+			group_path = #{group_path}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_group SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

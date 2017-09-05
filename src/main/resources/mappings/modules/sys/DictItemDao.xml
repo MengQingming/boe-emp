@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.DictItemDao">
+    
+    	<sql id="dictItemColumns">
+			a.id,
+			a.app_no AS "appNo",
+			a.dict_code AS "dict.dictCode",
+			a.dict_id AS "dict.id",
+			a.item_code AS "itemCode",
+			a.item_value AS "itemValue",
+			a.display_order AS "displayOrder",
+			a.status,
+			a.remarks,
+			a.attribute1,
+			a.attribute2,
+			a.attribute3,
+			a.attribute4,
+			a.attribute5,
+			a.attribute6,
+			a.attribute7,
+			a.attribute8,
+			a.attribute9,
+			a.attribute10,
+			a.language,
+			a.company_id AS "companyId",
+			a.company_no AS "companyNo",
+			a.company_name AS "companyName",
+			a.creation_date AS "creationDate",
+			a.last_update_date AS "lastUpdateDate"
+		</sql>
+    	<sql id="groupJoins">
+			LEFT JOIN sys_dict tt ON tt.id = a.dict_id
+	    </sql>
+    
+    
+    
+	<select id="get" resultType="DictItem">
+		SELECT 
+		<include refid="dictItemColumns"/>
+		FROM sys_dict_item a 
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictItem">
+		SELECT 
+			<include refid="dictItemColumns"/>
+		FROM sys_dict_item a
+		WHERE 1=1
+		<if test="language != null and language != ''">
+			AND a.language = #{language}
+		</if>
+		<if test="appNo != null and appNo != ''">
+			AND a.app_No = #{appNo}
+		</if>
+		<if test="status != null and status != ''">
+			AND a.status = #{status}
+		</if>
+		<if test="status == null or status == ''">
+			AND a.status = #{DEL_FLAG_NORMAL}
+		</if>
+		<if test="dictCodeQuery != null and dictCodeQuery != '' ">
+			AND a.dict_code = #{dict.dictCode}
+		</if>
+		<if test="itemCode != null and itemCode != '' ">
+			AND a.item_code = #{itemCode}
+		</if>
+		<if test="itemValue != null and itemValue != '' ">
+			AND a.item_value = #{itemValue}
+		</if>
+		<if test="companyId != null and companyId != '' ">
+			AND a.company_id = #{companyId}
+		</if>
+		<if test="remarks != null and remarks != ''">
+			AND a.remarks LIKE 
+					<if test="dbName == 'oracle'">'%'||#{remarks}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{remarks}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{remarks}, '%')</if>
+		</if>
+		ORDER BY a.dict_code,a.display_order, a.last_update_date DESC
+	</select>
+	
+	<select id="findAllList" resultType="DictItem">
+		SELECT 
+			<include refid="dictItemColumns"/>
+		FROM sys_dict_item a
+		WHERE status = #{DEL_FLAG_NORMAL} 
+		ORDER BY a.app_no, a.last_update_date DESC
+	</select>
+	
+	<select id="findListByDictCode" resultType="DictItem">
+		SELECT 
+			<include refid="dictItemColumns"/>
+		FROM sys_dict_item a
+		WHERE a.status = #{DEL_FLAG_NORMAL} and a.dict_code = #{dict.dictCode}
+		ORDER BY a.app_no, a.last_update_date DESC
+	</select>
+	
+	<select id="findTypeList" resultType="string">
+		SELECT 
+			app_no
+		FROM sys_dict_item
+		WHERE status = #{DEL_FLAG_NORMAL} 
+		GROUP BY app_no
+		ORDER BY app_no
+	</select>
+	
+	<insert id="insert">
+	    <selectKey keyProperty="id" resultType="int" order="BEFORE">  
+			select SEQ_DICT_ITEM.NEXTVAL from dual  
+		</selectKey>
+		
+		INSERT INTO sys_dict_item(
+			id,
+			app_no,
+			dict_code,
+			dict_id,
+			item_code,
+			item_value,
+			display_order,
+			status,
+			remarks,
+			attribute1,
+			attribute2,
+			attribute3,
+			attribute4,
+			attribute5,
+			attribute6,
+			attribute7,
+			attribute8,
+			attribute9,
+			attribute10,
+			language,
+			company_id,
+			company_no,
+			company_name,
+			creation_date
+		) VALUES (
+			#{id}, 
+			#{dict.appNo},
+			#{dict.dictCode},
+			#{dict.id},
+			#{itemCode},
+			#{itemValue},
+			#{displayOrder},
+			#{status},
+			#{remarks},
+			#{attribute1},
+			#{attribute2},
+			#{attribute3},
+			#{attribute4},
+			#{attribute5},
+			#{attribute6},
+			#{attribute7},
+			#{attribute8},
+			#{attribute9},
+			#{attribute10},
+			#{language},
+			#{companyId},
+			#{companyNo},
+			#{companyName},
+			#{creationDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_dict_item SET 
+			app_no = #{dict.appNo},
+			dict_code = #{dict.dictCode},
+			dict_id = #{dict.id},
+			item_code= #{itemCode},
+			item_value= #{itemValue},
+			display_order= #{displayOrder},
+			status= #{status},
+			remarks= #{remarks},
+			attribute1= #{attribute1},
+			attribute2= #{attribute2},
+			attribute3= #{attribute3},
+			attribute4= #{attribute4},
+			attribute5= #{attribute5},
+			attribute6= #{attribute6},
+			attribute7= #{attribute7},
+			attribute8= #{attribute8},
+			attribute9= #{attribute9},
+			attribute10= #{attribute10},
+			language = #{language},
+			company_id = #{companyId},
+			company_no  = #{companyNo},
+			company_name = #{companyName},
+			last_update_date = #{lastUpdateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete sys_dict_item 
+		WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteByDict">
+		delete sys_dict_item 
+		WHERE dict_id = #{id}
+	</delete>
+	
+	<delete id="updateByDict">
+		UPDATE sys_dict_item SET 
+			app_no = #{appNo},
+			dict_code = #{dictCode}
+		WHERE dict_id = #{id}
+	</delete>
+</mapper>

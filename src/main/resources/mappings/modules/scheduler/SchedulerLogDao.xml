@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.scheduler.dao.SchedulerLogDao">
+
+	<sql id="Log_List">
+		ID AS id,
+		JOB_ID AS jobId,
+		JOB_NAME AS jobName,
+		JOB_CODE AS jobCode,
+		JOB_IP AS jobIp,
+		JOB_PORT AS jobPort,
+		JOB_SERVICE AS jobService,
+		JOB_LOCK AS jobLock,
+		JOB_START_DATE AS jobStartDate,
+		JOB_STOP_DATE AS jobStopDate,
+		JOB_STATUS AS jobStatus,
+		JOB_SHOW_MSG AS jobShowMsg,
+		JOB_EXCEPTION AS jobException,
+		JOB_RUNNING_TYPE AS jobRunningType
+	</sql>
+
+	<select id="findList" resultType="SchedulerLog">
+		SELECT
+		<include refid="Log_List" />
+		FROM SYS_SCHEDULER_LOG
+		<where>
+			1 = 1
+			<if test="jobName != null and jobName != ''">
+				AND JOB_NAME LIKE '%'||#{jobName}||'%'
+			</if>
+			<if test="jobCode != null and jobCode != ''">
+				AND JOB_CODE LIKE '%'||#{jobCode}||'%'
+			</if>
+			<if test="jobIp != null and jobIp != ''">
+				AND JOB_IP LIKE '%'||#{jobIp}||'%'
+			</if>
+			<if test="jobStatus != null and jobStatus != ''">
+				AND JOB_STATUS = #{jobStatus}
+			</if>
+		</where>
+		ORDER BY JOB_STOP_DATE DESC
+	</select>
+
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select
+			SEQ_SYS_SCHEDULER_LOG.NEXTVAL from dual
+		</selectKey>
+
+		INSERT INTO SYS_SCHEDULER_LOG (
+		ID,
+		JOB_ID,
+		JOB_NAME,
+		JOB_CODE,
+		JOB_IP,
+		JOB_PORT,
+		JOB_SERVICE,
+		JOB_LOCK,
+		JOB_START_DATE,
+		JOB_STOP_DATE,
+		JOB_STATUS,
+		JOB_SHOW_MSG,
+		JOB_EXCEPTION,
+		JOB_RUNNING_TYPE
+		) values(
+		#{id},
+		#{jobId},
+		#{jobName},
+		#{jobCode},
+		#{jobIp},
+		#{jobPort},
+		#{jobService},
+		#{jobLock},
+		#{jobStartDate},
+		#{jobStopDate},
+		#{jobStatus},
+		#{jobShowMsg},
+		#{jobException},
+		#{jobRunningType}
+		)
+	</insert>
+
+</mapper>

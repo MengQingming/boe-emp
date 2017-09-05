@@ -1,0 +1,33 @@
+.css-alter {
+  width: 70%;
+  height: 70%;
+  background: #fff;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  box-shadow: 0 0 5px #333;
+  display: none; }
+  .css-alter .header {
+    padding-top: 4px;
+    overflow: hidden; }
+    .css-alter .header .alter-btn {
+      width: 100%;
+      float: left; }
+      .css-alter .header .alter-btn li {
+        float: left;
+        line-height: 30px;
+        font-weight: bold;
+        padding: 0 20px; }
+    .css-alter .header .css-close {
+      position: absolute;
+      right: 14px; }
+      .css-alter .header .css-close img {
+        height: 20px;
+        padding: 5px 10px 0 0; }
+  .css-alter .body {
+    padding: 30px; }
+
+/*# sourceMappingURL=bundle.css.map*/

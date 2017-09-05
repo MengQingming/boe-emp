@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.cfc.ou.dao.MInternalPoRuleDao">
+
+	<sql id="MInternalPoRuleColumns">
+		PO_NUMBER AS poNumber, REMARKS, CREATION_DATE AS creationDate, LAST_UPDATE_DATE AS lastUpdateDate, DATA_SOURCE AS dataSource, DATA_SOURCE_KEY AS dataSourceKey, LAST_SYNC_DATE AS lastSyncDate, ID, COMPANY_ID AS companyId, COMPANY_NO AS companyNo, COMPANY_NAME AS companyName, ORG_ID AS orgId, ORG_CODE AS orgCode, ORG_NAME AS orgName, RULE_TYPE AS ruleType, PLATE_NUMBER AS plateNumber, EMPLOYEE_NUMBER AS employeeNumber, ITEM2_ID AS item2Id, ITEM2_NO AS item2No, ITEM2_NAME AS item2Name, CC_CODE AS ccCode, CC_NAME AS ccName
+	</sql>
+
+	<select id="get" resultType="MInternalPoRule">
+		SELECT
+		<include refid="MInternalPoRuleColumns"/>
+		FROM m_internal_po_rule a
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="MInternalPoRule">
+		SELECT
+		<include refid="MInternalPoRuleColumns"/>
+		FROM m_internal_po_rule a
+		<where>
+			<if test="item2Id != null">
+				AND ITEM2_ID = #{item2Id}
+			</if>
+			<if test="employeeNumber != null and employeeNumber != ''">
+				AND EMPLOYEE_NUMBER = #{employeeNumber}
+			</if>
+			<if test="plateNumber != null and  plateNumber!= ''">
+				AND PLATE_NUMBER = #{plateNumber}
+			</if>
+			<if test="ccCode != null and ccCode != ''">
+				AND CC_CODE = #{ccCode}
+			</if>
+		</where>
+	</select>
+
+</mapper>

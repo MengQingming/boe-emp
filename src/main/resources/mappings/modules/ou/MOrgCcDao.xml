@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.cfc.ou.dao.MOrgCcDao">
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		ID, COMPANY_ID AS companyId, COMPANY_NO AS companyNo,
+		COMPANY_NAME AS companyName, ORG_ID AS orgId, ORG_CODE AS orgCode,
+		ORG_NAME AS orgName, CC_CODE AS ccCode, CC_NAME AS ccName,
+		CC_ATTRIBUTE_CODE AS ccAttributeCode, CC_ATTRIBUTE_NAME AS
+		ccAttributeName, PROFIT_CENTER_FLAG AS profitCenterFlag, CC_GROUP AS
+		ccGroup, STATUS, CREATION_DATE AS creationDate, LAST_UPDATE_DATE AS
+		lastUpdateDate, DATA_SOURCE AS dataSource, DATA_SOURCE_KEY AS
+		dataSourceKey, LAST_SYNC_DATE AS lastSyncDate
+	</sql>
+
+	<select id="get" resultType="com.boe.cfc.ou.entity.MOrgCc">
+		SELECT
+		<include refid="Base_Column_List"></include>
+		FROM M_ORG_CC WHERE ID = #{0} 
+	</select>
+	
+	<select id="getByCcCode" resultType="com.boe.cfc.ou.entity.MOrgCc">
+		SELECT
+		<include refid="Base_Column_List"></include>
+		FROM M_ORG_CC WHERE CC_CODE = #{0} 
+	</select>
+	<select id="getByOrgCode" resultType="com.boe.cfc.ou.entity.MOrgCc">
+		SELECT
+		<include refid="Base_Column_List"></include>
+		FROM M_ORG_CC WHERE org_CODE = #{0} 
+	</select>
+	<select id="queryByCcGroup" resultType="com.boe.cfc.ou.entity.MOrgCc">
+		SELECT
+		<include refid="Base_Column_List"></include>
+		FROM M_ORG_CC WHERE CC_GROUP = #{0} 
+	</select>
+	
+	<select id="findList" resultType="com.boe.cfc.ou.entity.MOrgCc">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM M_ORG_CC  
+		<where>
+			<if test="companyId != null and companyId > 0">
+				AND COMPANY_ID = #{companyId}
+			</if> 
+		</where>
+		<choose>
+			<when test="page != null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY CREATION_DATE DESC
+			</otherwise>
+		</choose>
+	</select>
+</mapper>

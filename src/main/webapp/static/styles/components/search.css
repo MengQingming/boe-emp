@@ -1,0 +1,32 @@
+.table thead td,
+.table thead th {
+  text-align: center; }
+
+.table tbody td,
+.table tbody th {
+  padding-left: 20px; }
+
+.css-contentTable {
+  margin-top: 58px; }
+
+.select2-drop {
+  z-index: 1000000; }
+
+.css-searchForm {
+  position: absolute;
+  width: 360px;
+  padding: 40px 0 60px;
+  background: #fff;
+  top: -500px;
+  box-shadow: 0 0 5px #333;
+  z-index: 99999;
+  overflow: hidden; }
+  .css-searchForm #btnSubmit {
+    margin-left: 190px;
+    margin-top: 10px; }
+  .css-searchForm #css-back {
+    margin-top: 10px; }
+  .css-searchForm #groupButton {
+    margin-left: 0; }
+
+/*# sourceMappingURL=bundle.css.map*/

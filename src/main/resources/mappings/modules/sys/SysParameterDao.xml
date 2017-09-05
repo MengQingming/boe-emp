@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.SysParameterDao">
+    
+	<sql id="sysParameterColumns">
+		a.id AS "id",
+		a.app_no AS "appNo",
+		a.company_id AS "companyId",
+		a.company_no AS "companyNo",
+		a.company_name AS "companyName",
+		a.param_group AS "paramGroup",
+		a.param_name AS "paramName",
+		a.param_value AS "paramValue",
+		a.param_format AS "paramFormat",
+		a.remarks AS "remarks",
+		a.status AS "status",
+		a.creation_date AS "creationDate",
+		a.last_update_date AS "lastUpdateDate"
+	</sql>
+	
+	<sql id="sysParameterJoins">
+	</sql>
+    
+    <!-- 根据参数组名称与参数名称集合查询 -->
+    <select id="queryByGroupNames" resultType="SysParameter">
+    	SELECT 
+			<include refid="sysParameterColumns"/>
+		FROM sys_parameter a 
+		<include refid="sysParameterJoins"/>
+		<where>
+			<if test="#{0} != null and #{0} != ''">
+				AND a.param_group = #{0}
+			</if>
+			<if test="paramNames != null and paramNames.size > 0">
+				<foreach collection="paramNames"  item="listItem" open=" AND (" close=")" separator=" OR ">
+					a.param_name = #{listItem}
+				</foreach>
+			</if>
+		</where>
+    </select>
+    
+	<select id="get" resultType="SysParameter">
+		SELECT 
+			<include refid="sysParameterColumns"/>
+		FROM sys_parameter a
+		<include refid="sysParameterJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysParameter">
+		SELECT 
+			<include refid="sysParameterColumns"/>
+		FROM sys_parameter a
+		<include refid="sysParameterJoins"/>
+		<where>
+			<if test="!currentUser.admin">
+				AND a.company_id = #{currentUser.company.id}
+			</if>
+			<if test="appNo != null and appNo != ''">
+				AND a.app_no = #{appNo}
+			</if>
+			<if test="paramGroup != null and paramGroup != ''">
+				AND a.PARAM_GROUP like '%'||#{paramGroup}||'%'
+			</if>
+		</where>
+	<!-- 	<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose> -->
+		ORDER BY  a.app_no ,a.company_no,a.param_group,a.param_name 
+	</select>
+	
+	<select id="findAllList" resultType="SysParameter">
+		SELECT 
+			<include refid="sysParameterColumns"/>
+		FROM sys_parameter a
+		<include refid="sysParameterJoins"/>
+		<where>
+			<if test="!currentUser.admin">
+				AND a.company_id = #{currentUser.company.id}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="checkParamName" resultType="SysParameter">
+		SELECT 
+			<include refid="sysParameterColumns"/>
+		FROM sys_parameter a
+		
+		WHERE param_name = #{0} and company_no= #{1} and param_group=#{2} and app_no=#{3}
+	</select>
+	<select id="findByGroupStatusName" resultType="SysParameter">
+		SELECT 
+			<include refid="sysParameterColumns"/>
+		FROM sys_parameter a
+		
+		<where> 
+			<if test="paramName!= null and paramName != ''">
+				param_name = #{paramName}
+			</if>
+			<if test="paramGroup != null and paramGroup!= ''">
+				 and param_group=#{paramGroup}
+			</if>
+			<if test="status != null and status != ''">
+				 and STATUS=#{status}
+			</if>
+		</where>
+	</select>
+	<insert id="insert">
+	
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select
+			SEQ_SYS_PARAMETER.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO sys_parameter(
+			id,
+			app_no,
+			company_id,
+			company_no,
+			company_name,
+			param_group,
+			param_name,
+			param_value,
+			param_format,
+			remarks,
+			status,
+			creation_date,
+			last_update_date
+		) VALUES (
+			#{id},
+			#{appNo},
+			#{companyId},
+			#{companyNo},
+			#{companyName},
+			#{paramGroup},
+			#{paramName},
+			#{paramValue},
+			#{paramFormat},
+			#{remarks},
+			#{status},
+			#{creationDate},
+			#{lastUpdateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_parameter SET 	
+			app_no = #{appNo},
+			company_id = #{companyId},
+			company_no = #{companyNo},
+			company_name = #{companyName},
+			param_group = #{paramGroup},
+			param_name = #{paramName},
+			param_value = #{paramValue},
+			param_format = #{paramFormat},
+			remarks = #{remarks},
+			status = #{status},
+			creation_date = #{creationDate},
+			last_update_date = #{lastUpdateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_parameter
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

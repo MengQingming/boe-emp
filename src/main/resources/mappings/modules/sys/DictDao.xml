@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.DictDao">
+    
+	<select id="get" resultType="Dict">
+		SELECT 
+			* 
+		FROM sys_dict 
+		WHERE id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Dict">
+		SELECT 
+			* 
+		FROM sys_dict
+		WHERE 1=1
+		<if test="language != null and language != ''">
+			AND language = #{language}
+		</if>
+		<if test="dictCode != null and dictCode != ''">
+			AND dict_code = #{dictCode}
+		</if>
+		<if test="appNo != null and appNo != ''">
+			AND app_no = #{appNo}
+		</if>
+		<if test="status != null and status != ''">
+			AND status = #{status}
+		</if>
+		<if test="status == null or status == ''">
+			AND status = '1'
+		</if>
+		<if test="remarks != null and remarks != ''">
+			AND remarks LIKE 
+					<if test="dbName == 'oracle'">'%'||#{remarks}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{remarks}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{remarks}, '%')</if>
+		</if>
+		ORDER BY app_no, last_update_date DESC
+	</select>
+	
+	<select id="findAllList" resultType="Dict">
+		SELECT 
+			* 
+		FROM sys_dict
+		WHERE status = #{DEL_FLAG_NORMAL} 
+		ORDER BY app_no, last_update_date DESC
+	</select>
+	
+	<select id="findTypeList" resultType="string">
+		SELECT 
+			app_no 
+		FROM sys_dict
+		WHERE status = #{DEL_FLAG_NORMAL} 
+		GROUP BY app_no
+		ORDER BY app_no
+	</select>
+	
+	<insert id="insert">
+	    <selectKey keyProperty="id" resultType="int" order="BEFORE">  
+			select SEQ_DICT.NEXTVAL from dual  
+		</selectKey>
+		
+		INSERT INTO sys_dict(
+			id, 
+			app_no,
+			dict_code,
+			dict_name,
+			remarks,
+			status,
+			language,
+			creation_date,
+			last_update_date
+		) VALUES (
+			#{id}, 
+			#{appNo},
+			#{dictCode},
+			#{dictName},
+			#{remarks},
+			#{status},
+			#{language},
+			#{creationDate},
+			#{lastUpdateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_dict SET 
+			app_no = #{appNo}, 
+			dict_code = #{dictCode}, 
+			dict_name = #{dictName}, 
+			remarks = #{remarks}, 
+			status = #{status}, 
+			language = #{language},
+			last_update_date = #{lastUpdateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete sys_dict
+		WHERE id = #{id}
+	</delete>
+	
+	<update id="deleteDictItemByDictId">
+		delete sys_dict_item 
+		WHERE dict_id = #{id}
+	</update>
+</mapper>

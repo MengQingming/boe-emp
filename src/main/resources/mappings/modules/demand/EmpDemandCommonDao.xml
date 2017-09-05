@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.modules.demand.dao.EmpDemandCommonDao">
+    
+	<sql id="empDemandCommonColumns">
+		a.id AS "id",
+		a.record_id AS "recordId",
+		a.demand_title AS "demandTitle",
+		a.demand_code AS "demandCode",
+		a.demand_category AS "demandCategory",
+		a.demand_type AS "demandType",
+		a.demand_source AS "demandSource",
+		a.demand_bp AS "demandBp",
+		a.propose_person AS "proposePerson",
+		a.propose_person_name AS "proposePersonName",
+		a.involve_sys AS "involveSys",
+		a.expect_time AS "expectTime",
+		a.invalid_date AS "invalidDate",
+		a.plan_cover AS "planCover",
+		a.describe AS "describe",
+		a.validity AS "validity",
+		a.feasibility AS "feasibility",
+		a.value_contribution AS "valueContribution",
+		a.demand_update_date AS "demandUpdateDate",
+		a.demand_update_user AS "demandUpdateUser",
+		a.suggeset_record_type AS "suggesetRecordType",
+		a.suggeset_record_name AS "suggesetRecordName",
+		a.is_expert AS "isExpert",
+		a.responsibility_dept AS "responsibilityDept",
+		a.tentative_solution AS "tentativeSolution",
+		a.approve_opinion AS "approveOpinion",
+		a.analysis_update_date AS "analysisUpdateDate",
+		a.analysis_update_user AS "analysisUpdateUser",
+		a.expert_group AS "expertGroup",
+		a.expert_group_name AS "expertGroupName",
+		a.solution AS "solution",
+		a.expert_review_date AS "expertReviewDate",
+		a.expert_review_user AS "expertReviewUser",
+		a.expert_review_user_name AS "expertReviewUserName",
+		a.plan_finish_date AS "planFinishDate",
+		a.proposal AS "proposal",
+		a.dept_update_date AS "deptUpdateDate",
+		a.dept_update_user AS "deptUpdateUser",
+		a.status AS "status",
+		a.status_name AS "statusName",
+		a.yn AS "yn",
+		a.creation_date AS "creationDate",
+		a.created_by AS "createdBy",
+		a.last_update_date AS "lastUpdateDate",
+		a.last_updated_by AS "lastUpdatedBy"
+	</sql>
+	
+	<sql id="empDemandCommonJoins">
+	</sql>
+    
+	<select id="get" resultType="EmpDemandCommon">
+		SELECT 
+			<include refid="empDemandCommonColumns"/>
+		FROM emp_demand_common a
+		<include refid="empDemandCommonJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="EmpDemandCommon">
+		SELECT 
+			<include refid="empDemandCommonColumns"/>
+		FROM emp_demand_common a
+		<include refid="empDemandCommonJoins"/>
+		<where>
+			
+			<if test="demandTitle != null and demandTitle != ''">
+				AND a.demand_title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{demandTitle}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{demandTitle}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{demandTitle},'%')</if>
+			</if>
+			<if test="demandCode != null and demandCode != ''">
+				AND a.demand_code = #{demandCode} 
+			</if>
+			<if test="demandCategory != null and demandCategory != ''">
+				AND a.demand_category = #{demandCategory}
+			</if>
+			<if test="demandType != null and demandType != ''">
+				AND a.demand_type = #{demandType}
+			</if>
+			<if test="demandSource != null and demandSource != ''">
+				AND a.demand_source = #{demandSource}
+			</if>
+			<if test="proposePerson != null and proposePerson != ''">
+				AND a.propose_person = #{proposePerson}
+			</if>
+			<if test="beginInvalidDate != null   and beginInvalidDate != '' ">
+				AND a.invalid_date >= #{beginInvalidDate} 
+			</if>
+			<if test=" endInvalidDate != null   and endInvalidDate != ''">
+				AND a.invalid_date &lt;= #{endInvalidDate}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="EmpDemandCommon">
+		SELECT 
+			<include refid="empDemandCommonColumns"/>
+		FROM emp_demand_common a
+		<include refid="empDemandCommonJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select SEQ_EMP_DEMAND_COMMON.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO emp_demand_common(
+			id,
+			record_id,
+			demand_title,
+			demand_code,
+			demand_category,
+			demand_type,
+			demand_source,
+			demand_bp,
+			propose_person,
+			propose_person_name,
+			involve_sys,
+			expect_time,
+			invalid_date,
+			plan_cover,
+			describe,
+			validity,
+			feasibility,
+			value_contribution,
+			demand_update_date,
+			demand_update_user,
+			suggeset_record_type,
+			suggeset_record_name,
+			is_expert,
+			responsibility_dept,
+			tentative_solution,
+			approve_opinion,
+			analysis_update_date,
+			analysis_update_user,
+			expert_group,
+			expert_group_name,
+			solution,
+			expert_review_date,
+			expert_review_user,
+			expert_review_user_name,
+			plan_finish_date,
+			proposal,
+			dept_update_date,
+			dept_update_user,
+			status,
+			status_name,
+			yn,
+			creation_date,
+			created_by,
+			last_update_date,
+			last_updated_by
+		) VALUES (
+			#{id},
+			#{recordId},
+			#{demandTitle},
+			#{demandCode},
+			#{demandCategory},
+			#{demandType},
+			#{demandSource},
+			#{demandBp},
+			#{proposePerson},
+			#{proposePersonName},
+			#{involveSys},
+			#{expectTime},
+			#{invalidDate},
+			#{planCover},
+			#{describe},
+			#{validity},
+			#{feasibility},
+			#{valueContribution},
+			#{demandUpdateDate},
+			#{demandUpdateUser},
+			#{suggesetRecordType},
+			#{suggesetRecordName},
+			#{isExpert},
+			#{responsibilityDept},
+			#{tentativeSolution},
+			#{approveOpinion},
+			#{analysisUpdateDate},
+			#{analysisUpdateUser},
+			#{expertGroup},
+			#{expertGroupName},
+			#{solution},
+			#{expertReviewDate},
+			#{expertReviewUser},
+			#{expertReviewUserName},
+			#{planFinishDate},
+			#{proposal},
+			#{deptUpdateDate},
+			#{deptUpdateUser},
+			#{status},
+			#{statusName},
+			#{yn},
+			#{creationDate},
+			#{createdBy},
+			#{lastUpdateDate},
+			#{lastUpdatedBy}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE emp_demand_common SET 	
+			record_id = #{recordId},
+			demand_title = #{demandTitle},
+			demand_code = #{demandCode},
+			demand_category = #{demandCategory},
+			demand_type = #{demandType},
+			demand_source = #{demandSource},
+			demand_bp = #{demandBp},
+			propose_person = #{proposePerson},
+			propose_person_name = #{proposePersonName},
+			involve_sys = #{involveSys},
+			expect_time = #{expectTime},
+			invalid_date = #{invalidDate},
+			plan_cover = #{planCover},
+			describe = #{describe},
+			validity = #{validity},
+			feasibility = #{feasibility},
+			value_contribution = #{valueContribution},
+			demand_update_date = #{demandUpdateDate},
+			demand_update_user = #{demandUpdateUser},
+			suggeset_record_type = #{suggesetRecordType},
+			suggeset_record_name = #{suggesetRecordName},
+			is_expert = #{isExpert},
+			responsibility_dept = #{responsibilityDept},
+			tentative_solution = #{tentativeSolution},
+			approve_opinion = #{approveOpinion},
+			analysis_update_date = #{analysisUpdateDate},
+			analysis_update_user = #{analysisUpdateUser},
+			expert_group = #{expertGroup},
+			expert_group_name = #{expertGroupName},
+			solution = #{solution},
+			expert_review_date = #{expertReviewDate},
+			expert_review_user = #{expertReviewUser},
+			expert_review_user_name = #{expertReviewUserName},
+			plan_finish_date = #{planFinishDate},
+			proposal = #{proposal},
+			dept_update_date = #{deptUpdateDate},
+			dept_update_user = #{deptUpdateUser},
+			status = #{status},
+			status_name = #{statusName},
+			yn = #{yn},
+			creation_date = #{creationDate},
+			created_by = #{createdBy},
+			last_update_date = #{lastUpdateDate},
+			last_updated_by = #{lastUpdatedBy}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM emp_demand_common
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deleteBatch">
+		UPDATE EMP_DEMAND_COMMON SET YN='N' WHERE ID IN 
+    	<foreach collection="array" item="item"  open="(" separator="," close=")" > 
+         #{item}  
+     </foreach> 
+	</update>
+	
+</mapper>

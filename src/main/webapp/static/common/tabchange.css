@@ -1,0 +1,10 @@
+	#tab_container_div{ width:98%; margin:0 auto;}
+	.cls_tab_title{height:31px;overflow:hidden;font-size:12px;float: left;}
+	.cls_tab_title ul{font-size:12px;margin:0;padding:0;text-align: center;list-style:none;}
+	.cls_tab_title_li{width:110px;height:31px;line-height:31px;}
+	.cls_tab_title_li_first a{color:#0069d2;text-decoration:none;font-family: "Helvetica Neue",Helvetica,Arial,"Microsoft Yahei","Hiragino Sans GB","Heiti SC","WenQuanYi Micro Hei";font-size: 14px;font-weight: bold;}
+	.cls_tab_title_li_first{width:106px;height:31px;line-height:31px;cursor:pointer;border: 1px solid #ddd; border-top: 3px solid #37a5e4;}
+	.cls_tab_title_li a{text-decoration:none;color:#333333;font-family: "Helvetica Neue",Helvetica,Arial,"Microsoft Yahei","Hiragino Sans GB","Heiti SC","WenQuanYi Micro Hei";font-size: 14px;font-weight: bold;}
+	.cls_tab_title_li a:hover{color:#0069d2;}
+	.cls_div{display:none;font-size:12px; border: 0px blue solid;z-index: 0;}
+	.cls_tab_body{height:160px;overflow-y: scroll;width:100%;padding-top: 0px;}

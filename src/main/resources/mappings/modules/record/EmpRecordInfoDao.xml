@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.modules.record.dao.EmpRecordInfoDao">
+    
+	<sql id="empRecordInfoColumns">
+		a.id AS "id",
+		a.project_id AS "projectId",
+		a.record_name AS "recordName",
+		a.include_demand AS "includeDemand",
+		a.responsibility_dept AS "responsibilityDept",
+		a.responsibility_center AS "responsibilityCenter",
+		a.record_dept AS "recordDept",
+		a.responsibility_person AS "responsibilityPerson",
+		a.record_tpye AS "recordTpye",
+		a.project_type AS "projectType",
+		a.record_summary AS "recordSummary",
+		a.implement_dept AS "implementDept",
+		a.implement_org_range AS "implementOrgRange",
+		a.implement_function_range AS "implementFunctionRange",
+		a.budget_org AS "budgetOrg",
+		a.project_cost_budget AS "projectCostBudget",
+		a.project_invest_budget AS "projectInvestBudget",
+		a.plan_time AS "planTime",
+		a.record_code AS "recordCode",
+		a.status AS "status",
+		a.status_name AS "statusName",
+		a.yn AS "yn",
+		a.creation_date AS "creationDate",
+		a.created_by AS "createdBy",
+		a.last_update_date AS "lastUpdateDate",
+		a.last_updated_by AS "lastUpdatedBy"
+	</sql>
+	
+	<sql id="empRecordInfoJoins">
+	</sql>
+    
+	<select id="get" resultType="EmpRecordInfo">
+		SELECT 
+			<include refid="empRecordInfoColumns"/>
+		FROM emp_record_info a
+		<include refid="empRecordInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="EmpRecordInfo">
+		SELECT 
+			<include refid="empRecordInfoColumns"/>
+		FROM emp_record_info a
+		<include refid="empRecordInfoJoins"/>
+		<where>
+			
+			<if test="recordName != null and recordName != ''">
+				AND a.record_name = #{recordName}
+			</if>
+			<if test="responsibilityDept != null and responsibilityDept != ''">
+				AND a.responsibility_dept = #{responsibilityDept}
+			</if>
+			<if test="recordTpye != null and recordTpye != ''">
+				AND a.record_tpye = #{recordTpye}
+			</if>
+			<if test="recordCode != null and recordCode != ''">
+				AND a.record_code = #{recordCode}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="EmpRecordInfo">
+		SELECT 
+			<include refid="empRecordInfoColumns"/>
+		FROM emp_record_info a
+		<include refid="empRecordInfoJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select SEQ_EMP_RECORD_INFO.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO emp_record_info(
+			id,
+			project_id,
+			record_name,
+			include_demand,
+			responsibility_dept,
+			responsibility_center,
+			record_dept,
+			responsibility_person,
+			record_tpye,
+			project_type,
+			record_summary,
+			implement_dept,
+			implement_org_range,
+			implement_function_range,
+			budget_org,
+			project_cost_budget,
+			project_invest_budget,
+			plan_time,
+			record_code,
+			status,
+			status_name,
+			yn,
+			creation_date,
+			created_by,
+			last_update_date,
+			last_updated_by
+		) VALUES (
+			#{id},
+			#{projectId},
+			#{recordName},
+			#{includeDemand},
+			#{responsibilityDept},
+			#{responsibilityCenter},
+			#{recordDept},
+			#{responsibilityPerson},
+			#{recordTpye},
+			#{projectType},
+			#{recordSummary},
+			#{implementDept},
+			#{implementOrgRange},
+			#{implementFunctionRange},
+			#{budgetOrg},
+			#{projectCostBudget},
+			#{projectInvestBudget},
+			#{planTime},
+			#{recordCode},
+			#{status},
+			#{statusName},
+			#{yn},
+			#{creationDate},
+			#{createdBy},
+			#{lastUpdateDate},
+			#{lastUpdatedBy}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE emp_record_info SET 	
+			project_id = #{projectId},
+			record_name = #{recordName},
+			include_demand = #{includeDemand},
+			responsibility_dept = #{responsibilityDept},
+			responsibility_center = #{responsibilityCenter},
+			record_dept = #{recordDept},
+			responsibility_person = #{responsibilityPerson},
+			record_tpye = #{recordTpye},
+			project_type = #{projectType},
+			record_summary = #{recordSummary},
+			implement_dept = #{implementDept},
+			implement_org_range = #{implementOrgRange},
+			implement_function_range = #{implementFunctionRange},
+			budget_org = #{budgetOrg},
+			project_cost_budget = #{projectCostBudget},
+			project_invest_budget = #{projectInvestBudget},
+			plan_time = #{planTime},
+			record_code = #{recordCode},
+			status = #{status},
+			status_name = #{statusName},
+			yn = #{yn},
+			creation_date = #{creationDate},
+			created_by = #{createdBy},
+			last_update_date = #{lastUpdateDate},
+			last_updated_by = #{lastUpdatedBy}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM emp_record_info
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

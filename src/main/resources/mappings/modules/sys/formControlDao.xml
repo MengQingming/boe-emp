@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.FormControlDao">
+
+	<sql id="queryColumns">
+		SF.ID AS "id",
+		SF.APP_NO AS "appNo",
+		SF.FORM_CODE AS "formCode",
+		SF.COMPANY_ID AS "companyId",
+		SF.COMPANY_NO AS "companyNo",
+		SF.COMPANY_NAME AS "companyName",
+		SF.CONFIG_NAME AS "configName",
+		SF.CONFIG_DESP AS "configDesp",
+		SF.CONFIG_CONTENT AS "configContent",
+		SF.CONFIG_DEMO AS "configDemo",
+		SF.STATUS AS "status",
+		SF.CREATION_DATE AS "createDate",
+		SF.LAST_UPDATE_DATE AS "updateDAte",
+		SF.BUSINESS_ITEM1 as "businessItem1",
+		SF.BUSINESS_ITEM2 as "businessItem2",
+		SF.BUSINESS_ITEM3 as "businessItem3",
+		SF.BUSINESS_ITEM4 as "businessItem4",
+		SF.BUSINESS_ITEM5 as "businessItem5"
+	</sql>
+	
+	<select id="get" resultType="FormControl">
+		SELECT 
+			<include refid="queryColumns"/>
+		FROM 
+			SYS_FORM_CONTROL SF
+		WHERE 
+			SF.ID = #{id}
+	</select>
+	
+	<select id="findList" parameterType="FormControl" resultType="FormControl">
+		SELECT
+			SA.APP_NAME AS "appName",
+			<include refid="queryColumns"/>
+		FROM
+			SYS_FORM_CONTROL SF
+		LEFT JOIN SYS_APP SA ON SF.APP_NO = SA.APP_NO
+		WHERE 1 = 1
+			<if test="companyId != null and companyId != ''">
+				AND SF.COMPANY_ID = #{companyId}
+			</if>
+			<if test="appNo != null and appNo != ''">
+				AND SF.APP_NO = #{appNo}
+			</if>
+			<if test="configName != null and configName != ''">
+				AND SF.CONFIG_NAME like '%'||#{configName}||'%'
+			</if>
+			<if test="formCode != null and formCode != ''">
+				AND SF.FORM_CODE like '%'||#{formCode}||'%'
+			</if>
+			<if test="status != null and status != ''">
+				AND SF.STATUS = #{status}
+			</if>
+			<if test="companyId != null and companyId != ''">
+				AND SF.COMPANY_ID = #{companyId}
+			</if>
+	</select>
+	
+	<insert id="insert" parameterType="FormControl">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			SELECT 
+				SEQ_SYS_FORMCONTROL.NEXTVAL 
+			FROM 
+				DUAL
+		</selectKey>
+		INSERT INTO 
+			SYS_FORM_CONTROL(
+			
+				ID,
+				APP_NO,
+				FORM_CODE,
+				COMPANY_ID,
+				COMPANY_NO,
+				COMPANY_NAME,
+				CONFIG_NAME,
+				CONFIG_DESP,
+				CONFIG_CONTENT,
+				CONFIG_DEMO,
+				STATUS,
+				CREATION_DATE,
+				LAST_UPDATE_DATE,
+				BUSINESS_ITEM1,
+				BUSINESS_ITEM2,
+				BUSINESS_ITEM3,
+				BUSINESS_ITEM4,
+				BUSINESS_ITEM5
+	
+				)VALUES(
+				
+					#{id},
+					#{appNo},
+					#{formCode},
+					#{companyId},
+					#{companyNo},
+					#{companyName},
+					#{configName},
+					#{configDesp},
+					#{configContent},
+					#{configDemo},
+					#{status},
+					#{createDate},
+					#{updateDate},
+					#{businessItem1},
+					#{businessItem2},
+					#{businessItem3},
+					#{businessItem4},
+					#{businessItem5}
+				)
+	</insert>
+
+	<update id="update" parameterType="FormControl">
+		UPDATE 
+			SYS_FORM_CONTROL 
+		SET 
+			ID = #{id},
+			APP_NO = #{appNo},
+			FORM_CODE = #{formCode},
+			COMPANY_ID = #{companyId},
+			COMPANY_NO = #{companyNo},
+			COMPANY_NAME = #{companyName},
+			CONFIG_NAME = #{configName},
+			CONFIG_DESP = #{configDesp},
+			CONFIG_CONTENT = #{configContent},
+			CONFIG_DEMO = #{configDemo},
+			STATUS = #{status},
+			CREATION_DATE = #{createDate},
+			LAST_UPDATE_DATE = #{updateDate},
+			BUSINESS_ITEM1 = #{businessItem1},
+			BUSINESS_ITEM2 = #{businessItem2},
+			BUSINESS_ITEM3 = #{businessItem3},
+			BUSINESS_ITEM4 = #{businessItem4},
+			BUSINESS_ITEM5 = #{businessItem5}
+		WHERE 
+			ID = #{id}
+	</update>
+
+	<delete id="delete" parameterType="FormControl">
+		DELETE 
+			SYS_FORM_CONTROL 
+		WHERE 
+			ID = #{id}
+	</delete>
+
+	<select id="getFormControlByName" parameterType="FormControl" resultType="FormControl">
+		SELECT 
+			<include refid="queryColumns"/>
+		FROM 
+			SYS_FORM_CONTROL SF
+		WHERE 1=1 and sf.status = '1'
+		<if test="formCode != null and formCode != ''">
+			AND SF.FORM_CODE = #{formCode}
+		</if>
+		<if test="configName != null and configName != ''">
+			AND SF.CONFIG_NAME = #{configName}
+		</if>
+		<if test="companyId != null and companyId != ''">
+			AND SF.COMPANY_ID = #{companyId}
+		</if>
+		<if test="businessItem1 != null and businessItem2 != ''">
+			AND SF.BUSINESS_ITEM1 = #{businessItem1}
+		</if>
+		<if test="businessItem2 != null and businessItem2 != ''">
+			AND SF.BUSINESS_ITEM2 = #{businessItem2}
+		</if>
+		<if test="businessItem3 != null and businessItem3 != ''">
+			AND SF.BUSINESS_ITEM3 = #{businessItem3}
+		</if>
+		<if test="businessItem4 != null and businessItem4 != ''">
+			AND SF.BUSINESS_ITEM4 = #{businessItem4}
+		</if>
+		<if test="businessItem5 != null and businessItem5 != ''">
+			AND SF.BUSINESS_ITEM5 = #{businessItem5}
+		</if>
+	</select>
+</mapper>

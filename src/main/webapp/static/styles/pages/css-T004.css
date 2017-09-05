@@ -1,0 +1,24 @@
+body {
+  overflow-x: hidden; }
+
+.css-top {
+  padding-top: 24px;
+  height: 0; }
+
+#inputForm .bs-docs-example2 h4 {
+  font-size: 16px;
+  color: #333; }
+
+#inputForm .css-block {
+  border: 0;
+  border-bottom: 1px dashed #333; }
+  #inputForm .css-block h4 {
+    margin-bottom: 30px;
+    padding-left: 20px; }
+  #inputForm .css-block table {
+    margin: 0 auto; }
+    #inputForm .css-block table tr td {
+      padding-bottom: 14px;
+      position: relative; }
+
+/*# sourceMappingURL=bundle.css.map*/

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.modules.kpi.dao.EmpKpiDao">
+    
+	<sql id="empKpiColumns">
+		a.id AS "id",
+		a.kpi_level AS "kpiLevel",
+		a.kpi_year AS "kpiYear",
+		a.kpi_name AS "kpiName",
+		a.dimension AS "dimension",
+		a.target_type AS "targetType",
+		a.kpi AS "kpi",
+		a.year_target AS "yearTarget",
+		a.weight AS "weight",
+		a.key_node AS "keyNode",
+		a.score_standard AS "scoreStandard",
+		a.date_source AS "dateSource",
+		a.show_stage2 AS "showStage2",
+		a.edit_stage2 AS "editStage2",
+		a.yn AS "yn",
+		a.creation_date AS "creationDate",
+		a.created_by AS "createdBy",
+		a.last_update_date AS "lastUpdateDate",
+		a.last_updated_by AS "lastUpdatedBy"
+	</sql>
+	
+	<sql id="empKpiJoins">
+	</sql>
+    
+	<select id="get" resultType="EmpKpi">
+		SELECT 
+			<include refid="empKpiColumns"/>
+		FROM emp_kpi a
+		<include refid="empKpiJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="EmpKpi">
+		SELECT 
+			<include refid="empKpiColumns"/>
+		FROM emp_kpi a
+		<include refid="empKpiJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="EmpKpi">
+		SELECT 
+			<include refid="empKpiColumns"/>
+		FROM emp_kpi a
+		<include refid="empKpiJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select SEQ_EMP_KPI.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO emp_kpi(
+			id,
+			kpi_level,
+			kpi_year,
+			kpi_name,
+			dimension,
+			target_type,
+			kpi,
+			year_target,
+			weight,
+			key_node,
+			score_standard,
+			date_source,
+			show_stage2,
+			edit_stage2,
+			yn,
+			creation_date,
+			created_by,
+			last_update_date,
+			last_updated_by
+		) VALUES (
+			#{id},
+			#{kpiLevel},
+			#{kpiYear},
+			#{kpiName},
+			#{dimension},
+			#{targetType},
+			#{kpi},
+			#{yearTarget},
+			#{weight},
+			#{keyNode},
+			#{scoreStandard},
+			#{dateSource},
+			#{showStage2},
+			#{editStage2},
+			#{yn},
+			#{creationDate},
+			#{createdBy},
+			#{lastUpdateDate},
+			#{lastUpdatedBy}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE emp_kpi SET 	
+			kpi_level = #{kpiLevel},
+			kpi_year = #{kpiYear},
+			kpi_name = #{kpiName},
+			dimension = #{dimension},
+			target_type = #{targetType},
+			kpi = #{kpi},
+			year_target = #{yearTarget},
+			weight = #{weight},
+			key_node = #{keyNode},
+			score_standard = #{scoreStandard},
+			date_source = #{dateSource},
+			show_stage2 = #{showStage2},
+			edit_stage2 = #{editStage2},
+			yn = #{yn},
+			creation_date = #{creationDate},
+			created_by = #{createdBy},
+			last_update_date = #{lastUpdateDate},
+			last_updated_by = #{lastUpdatedBy}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM emp_kpi
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

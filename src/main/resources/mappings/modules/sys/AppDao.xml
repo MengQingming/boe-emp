@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.AppDao">
+    
+	<select id="get" resultType="App">
+		SELECT 
+			* 
+		FROM sys_app
+		WHERE id = #{id}
+	</select>
+	
+	<select id="findByAppNo" resultType="App">
+		SELECT 
+			* 
+		FROM sys_app
+		WHERE app_no = #{appNo}
+	</select>
+	
+	<select id="findList" resultType="App">
+		SELECT 
+			* 
+		FROM sys_app 
+		WHERE 1=1
+		<if test="appNo != null and appNo != ''">
+			AND app_no = #{appNo}
+		</if>
+		<if test="status != null and status != ''">
+			AND status = #{status}
+		</if>
+		<if test="status == null or status == ''">
+			AND status = '1'
+		</if>
+		ORDER BY app_no, last_update_date DESC
+	</select>
+	
+	<select id="findAllList" resultType="App">
+		SELECT 
+			* 
+		FROM sys_app
+		WHERE status = #{DEL_FLAG_NORMAL} 
+		ORDER BY app_no, last_update_date DESC
+	</select>
+	
+	
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">  
+	    	select SEQ_SYS_APP.NEXTVAL from dual  
+	    </selectKey>
+	    
+		INSERT INTO sys_app(
+			id, 
+			app_no,
+			app_name,
+			version_num,
+			status,
+			creation_date
+		) VALUES (
+			#{id}, 
+			#{appNo},
+			#{appName},
+			#{versionNum},
+			#{status},
+			#{creationDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_app SET 
+			app_no = #{appNo}, 
+			app_name = #{appName}, 
+			version_num = #{versionNum}, 
+			status = #{status}, 
+			last_update_date = #{lastUpdateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		delete sys_app 
+		WHERE id = #{id}
+	</update>
+</mapper>

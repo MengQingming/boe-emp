@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.cfc.ou.dao.SscGroupNhOrgDao">
+
+	<resultMap id="OrgResultMap" type="com.boe.cfc.ou.entity.SscGroupNhOrg">
+		<id column="ID"  property="id" />
+		<result column="COMPANY_ID"  property="companyId" />
+		<result column="COMPANY_NO"  property="companyNo" />
+		<result column="COMPANY_NAME"  property="companyName" />
+		<result column="GROUP_ID"  property="groupId" />
+		<result column="GROUP_NO"  property="groupNo" />
+		<result column="GROUP_NAME"  property="groupName" />
+		<result column="STATUS"  property="status" />
+		<result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+		<result column="OU_ID" property="ouId"/>
+
+		<collection property="groupNhOu" ofType="com.boe.cfc.ou.entity.SscGroupNhOu">
+			<result property="id" column="C_ID"/>
+			<result property="ouName" column="ouName"/>
+			<result property="functionalCurrency" column="functionalCurrency"/>
+			<result property="orgId" column="C_ORGID"/>
+		</collection>
+
+	</resultMap>
+
+	<!-- ou-->
+	<sql id="Ou_Column_List">
+		ID, OU_NAME AS ouName, FUNCTIONAL_CURRENCY AS functionalCurrency, ORG_ID AS orgId
+	</sql>
+	
+	<!-- org-->
+	<sql id="Org_Column_List">
+		CREATION_DATE AS creationDate, 
+		LAST_UPDATE_DATE AS lastUpdateDate, 
+		OU_ID AS ouId, 
+		ID, COMPANY_ID AS companyId, 
+		COMPANY_NO AS companyNo, 
+		COMPANY_NAME AS companyName, 
+		GROUP_ID AS groupId, 
+		GROUP_NO AS groupNo, 
+		GROUP_NAME AS groupName, 
+		ORG_ID AS orgId, 
+		ORG_NAME AS orgName, STATUS
+	</sql>
+
+	<select id="findOuList" resultType="SscGroupNhOu">
+		SELECT
+		<include refid="Ou_Column_List"/>
+		FROM SSC_GROUP_NH_OU
+		ORDER BY id ASC
+	</select>
+
+	<update id="updateOrgAndOu">
+		update SSC_GROUP_NH_ORG
+		set OU_ID = #{ouId}
+		where ID = #{id}
+	</update>
+
+	<select id="findOrgByGroupId" resultMap="OrgResultMap">
+	SELECT
+		org.*,
+		ou.id as C_ID,
+		ou.ou_name as ouName,
+		ou.FUNCTIONAL_CURRENCY as functionalCurrency,
+		ou.org_id as C_ORGID
+	FROM SSC_GROUP_NH_ORG org ,SSC_GROUP_NH_OU ou
+	WHERE
+		ou.id = org.ou_id
+		and org.GROUP_ID = #{groupId}
+	</select>
+
+	<insert id="insert">
+
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select
+			SEQ_SSC_GROUP_NH_ORG.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO SSC_GROUP_NH_ORG(
+		ID,
+		COMPANY_ID,
+		COMPANY_NO,
+		COMPANY_NAME,
+		GROUP_ID,
+		GROUP_NO ,
+		GROUP_NAME ,
+		OU_ID,
+		STATUS,
+		CREATION_DATE,
+		LAST_UPDATE_DATE
+		) VALUES (
+		#{id},
+		#{companyId},
+		#{companyNo},
+		#{companyName},
+		#{groupId},
+		#{groupNo},
+		#{groupName},
+		#{ouId},
+		#{status},
+		#{creationDate},
+		#{lastUpdateDate}
+		)
+	</insert>
+
+</mapper>

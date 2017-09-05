@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.CompanyDao">
+    
+	<select id="get" resultType="Company">
+		SELECT 
+			* 
+		FROM sys_company
+		WHERE id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Company">
+		SELECT 
+			* 
+		FROM sys_company 
+		WHERE del_flag = #{DEL_FLAG_NORMAL} 
+		<if test="status != null and status != ''">
+			AND status = #{status}
+		</if>
+		<if test="status == null or status == ''">
+			AND status = '1'
+		</if>
+		<if test="id != null and id != ''">
+			AND id = #{id}
+		</if>
+		<if test="companyNo != null and companyNo != ''">
+			AND company_no = #{companyNo}
+		</if>
+		ORDER BY last_update_date DESC
+	</select>
+	
+	<select id="findAllList" resultType="Company">
+		SELECT 
+			* 
+		FROM sys_company
+		WHERE del_flag = #{DEL_FLAG_NORMAL} and status = '1'
+		ORDER BY last_update_date DESC
+	</select>
+	
+	
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">  
+	    	select SEQ_SYS_COMPANY.NEXTVAL from dual  
+	    </selectKey>
+	    
+		INSERT INTO sys_company(
+			id, 
+			attribute1,
+			attribute2,
+			attribute3,
+			attribute4,
+			attribute5,
+			attribute6,
+			attribute7,
+			attribute8,
+			attribute9,
+			attribute10,
+			CREATION_DATE,
+			LAST_UPDATE_DATE,
+			COMPANY_NO,
+			COMPANY_NAME, 
+			COMPANY_SHORT_NAME, 
+			REMARKS, 
+			STATUS, 
+			START_DATE,
+			END_DATE,
+			DEL_FLAG
+		) VALUES (
+			#{id}, 
+			#{attribute1},
+			#{attribute2},
+			#{attribute3},
+			#{attribute4},
+			#{attribute5},
+			#{attribute6},
+			#{attribute7},
+			#{attribute8},
+			#{attribute9},
+			#{attribute10},
+			#{ creationDate},
+			#{lastUpdateDate},
+			#{companyNo},
+			#{companyName}, 
+			#{companyShortName}, 
+			#{remarks},
+			#{status},
+			#{startDate},
+			#{endDate}, 
+			#{DEL_FLAG_NORMAL}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_company SET 
+			attribute1 = #{attribute1},
+			attribute2 = #{attribute2},
+			attribute3 = #{attribute3},
+			attribute4 = #{attribute4},
+			attribute5 = #{attribute5},
+			attribute6 = #{attribute6},
+			attribute7 = #{attribute7},
+			attribute8 = #{attribute8},
+			attribute9 = #{attribute9},
+			attribute10 = #{attribute10},
+			CREATION_DATE =#{creationDate},
+			LAST_UPDATE_DATE =#{lastUpdateDate},
+			COMPANY_NO =#{companyNo},
+			COMPANY_NAME =#{companyName}, 
+			COMPANY_SHORT_NAME =#{companyShortName}, 
+			REMARKS =#{remarks}, 
+			STATUS = #{status}, 
+			START_DATE =#{startDate}, 
+			END_DATE =#{endDate}, 
+			DEL_FLAG =#{delFlag}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_company SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.SysFileDao">
+    
+	<!-- 通用查询结果列-->
+	<sql id="sysFileColumns">
+		  ID, 
+		  APP_NO AS appNo, 
+		  COMPANY_ID AS companyId,
+		  COMPANY_NO AS companyNo, 
+		  COMPANY_NAME AS companyName,
+		  FILE_TYPE AS fileType, 
+		  FILE_NAME AS fileName, 
+		  SERVER_PATH AS serverPath, 
+		  CLIENT_PATH AS clientPath, 
+		  CLIENT_IP AS clientIp, 
+		  STATUS, 
+		  DATA_SOURCE AS dataSource,
+		  DATA_SOURCE_KEY AS dataSourceKey,
+		  CREATION_DATE AS creationDate, 
+		  LAST_UPDATE_DATE AS lastUpdateDate
+	</sql>
+	
+	<sql id="sysFileJoins">
+	</sql>
+    
+    
+	<select id="get" resultType="SysFile">
+		SELECT 
+			<include refid="sysFileColumns"/>
+		FROM SYS_FILE a
+		<include refid="sysFileJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	
+	<select id="findAllList" resultType="SysFile">
+		SELECT 
+			<include refid="sysFileColumns"/>
+		FROM SYS_FILE a
+		<include refid="sysFileJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="queryByAppNoAndDataSourceKey" resultType="SysFile">
+		SELECT 
+			<include refid="sysFileColumns"/>
+		FROM SYS_FILE a
+		
+		WHERE  DATA_SOURCE_KEY= #{1} and app_no=#{2} order by LAST_UPDATE_DATE asc
+	</select>
+	
+	<select id="queryByAppNoAndDataSource" resultType="SysFile">
+		SELECT 
+			<include refid="sysFileColumns"/>
+		FROM SYS_FILE a
+		
+		WHERE DATA_SOURCE=#{0} AND DATA_SOURCE_KEY= #{1} AND APP_NO=#{2} order by LAST_UPDATE_DATE asc
+	</select>
+	
+	<select id="checkFileIsExist" resultType="SysFile">
+		SELECT 
+			<include refid="sysFileColumns"/>
+		FROM SYS_FILE a
+		
+		WHERE  DATA_SOURCE_KEY= #{1} and SERVER_PATH=#{0} 
+	</select>
+	
+	<select id="getCollectionFile" resultType="SysFile">
+		SELECT 
+			<include refid="sysFileColumns"/>
+		FROM SYS_FILE a
+		
+		WHERE  DATA_SOURCE = #{dataSource} and DATA_SOURCE_KEY = #{dataSourceKey} 
+	</select>
+	
+	<insert id="insert">
+	
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select
+			SEQ_SYS_FILE.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO SYS_FILE(
+			  ID, 
+			  APP_NO , 
+			  COMPANY_ID ,
+			  COMPANY_NO , 
+			  COMPANY_NAME ,
+			  FILE_TYPE , 
+			  FILE_NAME, 
+			  SERVER_PATH , 
+			  CLIENT_PATH, 
+			  CLIENT_IP, 
+			  STATUS, 
+			  DATA_SOURCE ,
+			  DATA_SOURCE_KEY,
+			  CREATION_DATE , 
+			  LAST_UPDATE_DATE 
+		) VALUES (
+			  #{id}, 
+			  #{appNo}, 
+			  #{companyId},
+			  #{companyNo}, 
+			  #{companyName},
+			  #{fileType}, 
+			  #{fileName}, 
+			  #{serverPath}, 
+			  #{clientPath}, 
+			  #{clientIp}, 
+			  #{status}, 
+			  #{dataSource},
+			  #{dataSourceKey},
+			  #{creationDate}, 
+			  #{lastUpdateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE SYS_FILE SET
+			APP_NO = #{appNo},
+			COMPANY_ID = #{companyId},
+			COMPANY_NO = #{companyNo},
+			company_name = #{companyName},
+			FILE_TYPE = #{fileType},
+			FILE_NAME = #{fileName},
+			SERVER_PATH = #{serverPath},
+			CLIENT_PATH = #{clientPath},
+			CLIENT_IP = #{clientIp},
+			status = #{status},
+			DATA_SOURCE=#{dataSource},
+			DATA_SOURCE_KEY=#{dataSourceKey},
+			creation_date = #{creationDate},
+			last_update_date = #{lastUpdateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM SYS_FILE
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

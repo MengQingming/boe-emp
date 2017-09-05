@@ -1,0 +1,30 @@
+.css-vendorGroup {
+  width: 300px;
+  position: fixed;
+  background: #fff;
+  z-index: 100;
+  padding: 10px 40px 20px;
+  box-shadow: 0 0 5px #333;
+  left: 30%;
+  top: 30%; }
+  .css-vendorGroup .dropdownNone {
+    display: none; }
+  .css-vendorGroup #name ul {
+    height: 200px;
+    overflow-y: scroll; }
+  .css-vendorGroup #success {
+    margin-top: 20px;
+    margin-left: 100px; }
+  .css-vendorGroup #back {
+    margin-top: 20px;
+    margin-left: 10px; }
+  .css-vendorGroup label {
+    width: 80px;
+    margin-top: 10px; }
+  .css-vendorGroup h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 18px;
+    font-weight: bold; }
+
+/*# sourceMappingURL=bundle.css.map*/

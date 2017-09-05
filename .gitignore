@@ -1,0 +1,7 @@
+logs/
+target/
+.svn/
+.settings/
+.externalToolBuilders/
+.project
+.classpath

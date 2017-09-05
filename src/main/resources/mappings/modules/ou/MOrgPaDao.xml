@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.cfc.ou.dao.MOrgPaDao">
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+	ID, COMPANY_ID AS companyId, COMPANY_NO AS companyNo, COMPANY_NAME AS companyName, ORG_ID AS orgId, ORG_CODE AS orgCode, ORG_NAME AS orgName, VALUE_SET_ID AS valueSetId, VALUE_SET_NAME AS valueSetName, VALUE_CODE AS valueCode, VALUE_DESC AS valueDesc, CREATION_DATE AS creationDate, LAST_UPDATE_DATE AS lastUpdateDate, DATA_SOURCE AS dataSource, DATA_SOURCE_KEY AS dataSourceKey, LAST_SYNC_DATE AS lastSyncDate		
+	</sql>
+
+	<select id="get" resultType="com.boe.cfc.ou.entity.MOrgPa">
+		SELECT
+		<include refid="Base_Column_List"></include>
+		FROM M_ORG_PA WHERE ID = #{0} 
+	</select>
+	
+	<select id="findList" resultType="com.boe.cfc.ou.entity.MOrgPa">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM M_ORG_PA
+		<where>
+			<if test="orgCode != null and orgCode > 0">
+				AND ORG_CODE = #{OrgCode}
+			</if>
+			<if test="valueSetId != null and valueSetId > 0">
+				AND VALUE_SET_ID = #{valueSetId}
+			</if>
+		</where>
+		<choose>
+			<when test="page != null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY CREATION_DATE DESC
+			</otherwise>
+		</choose>
+	</select>
+</mapper>

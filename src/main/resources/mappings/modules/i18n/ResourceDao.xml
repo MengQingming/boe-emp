@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.i18n.dao.ResourceDao">
+
+	<sql id="resourceColumns">
+		ID as "id",
+		COMPANY_ID as "companyId",
+		COMPANY_NO as "companyNo",
+		COMPANY_NAME as "companyName",
+		APP_NO as "appNo",
+		LANGUAGE as "language",
+		RESOURCE_TYPE as "type",
+		RESOURCE_CODE as "code",
+		RESOURCE_VALUE as "value",
+		REMARKS as "remarks",
+		CREATION_DATE as "createDate",
+		LAST_UPDATE_DATE as "updateDate"
+	</sql>
+
+	<select id="get" resultType="Resource">
+		SELECT
+			<include refid="resourceColumns"></include>
+		FROM
+			SYS_RESOURCE
+		WHERE 
+			ID = #{id}
+	</select>
+	
+	<select id="findAllList" resultType="Resource">
+		SELECT
+			<include refid="resourceColumns"/>
+		FROM 
+			SYS_RESOURCE
+	</select>
+	
+	<select id="findList" parameterType="Resource" resultType="Resource">
+		SELECT
+			<include refid="resourceColumns"/>
+		FROM 
+			SYS_RESOURCE SR
+		WHERE 1=1
+			<if test="companyId!=null and companyId!=''">
+				AND SR.COMPANY_ID = #{companyId}
+			</if>
+			<if test="language!=null and language!=''">
+				AND SR.LANGUAGE = #{language}
+			</if>
+			<if test="code!=null and code!=''">
+				AND SR.RESOURCE_CODE like '%'||#{code}||'%'
+			</if>
+			<if test="type!=null and type!=''">
+				AND SR.RESOURCE_TYPE = #{type}
+			</if>
+			<if test="companyId!=null and companyId!=''">
+				AND SR.COMPANY_ID = #{companyId}
+			</if>
+	</select>
+	
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			SELECT 
+				SEQ_SYS_RESOURCE.NEXTVAL	
+			FROM 
+				dual
+		</selectKey>
+		INSERT INTO SYS_RESOURCE(
+			ID,
+			COMPANY_ID,
+			COMPANY_NO,
+			COMPANY_NAME,
+			APP_NO,
+			LANGUAGE,
+			RESOURCE_TYPE,
+			RESOURCE_CODE,
+			RESOURCE_VALUE,
+			REMARKS,
+			CREATION_DATE,
+			LAST_UPDATE_DATE
+		)VALUES(
+			#{id},
+			#{companyId},
+			#{companyNo},
+			#{companyName},
+			#{appNo},
+			#{language},
+			#{type},
+			#{code},
+			#{value},
+			#{remarks},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE 
+			SYS_RESOURCE 
+		SET 
+			COMPANY_ID = #{companyId},
+			COMPANY_NO = #{companyNo},
+			COMPANY_NAME = #{companyName},
+			APP_NO = #{appNo},
+			LANGUAGE = #{language},
+			RESOURCE_TYPE = #{type},
+			RESOURCE_CODE = #{code},
+			RESOURCE_VALUE = #{value},
+			REMARKS = #{remarks},
+			LAST_UPDATE_DATE = #{updateDate}
+		WHERE 
+			ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		DELETE 
+			SYS_RESOURCE 
+		WHERE 
+			ID = #{id}
+	</delete>
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.cfc.ou.dao.MInternalPoDao">
+
+	<sql id="mInternalPoColumns">
+		a.id AS "id",
+		a.company_id AS "companyId",
+		a.company_no AS "companyNo",
+		a.company_name AS "companyName",
+		a.org_id AS "orgId",
+		a.org_code AS "orgCode",
+		a.org_name AS "orgName",
+		a.po_number AS "poNumber",
+		a.remarks AS "remarks",
+		a.creation_date AS "creationDate",
+		a.last_update_date AS "lastUpdateDate",
+		a.data_source AS "dataSource",
+		a.data_source_key AS "dataSourceKey",
+		a.last_sync_date AS "lastSyncDate"
+	</sql>
+
+	<sql id="mInternalPoJoins">
+	</sql>
+
+	<select id="get" resultType="MInternalPo">
+		SELECT
+		<include refid="mInternalPoColumns"/>
+		FROM m_internal_po a
+		<include refid="mInternalPoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="MInternalPo">
+		SELECT
+		<include refid="mInternalPoColumns"/>
+		FROM m_internal_po a
+		<include refid="mInternalPoJoins"/>
+		<where>
+
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findAllList" resultType="MInternalPo">
+		SELECT
+		<include refid="mInternalPoColumns"/>
+		FROM m_internal_po a
+		<include refid="mInternalPoJoins"/>
+		<where>
+
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select SEQ_M_INTERNAL_PO.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO m_internal_po(
+		id,
+		company_id,
+		company_no,
+		company_name,
+		org_id,
+		org_code,
+		org_name,
+		po_number,
+		remarks,
+		creation_date,
+		last_update_date,
+		data_source,
+		data_source_key,
+		last_sync_date
+		) VALUES (
+		#{id},
+		#{companyId},
+		#{companyNo},
+		#{companyName},
+		#{orgId},
+		#{orgCode},
+		#{orgName},
+		#{poNumber},
+		#{remarks},
+		#{creationDate},
+		#{lastUpdateDate},
+		#{dataSource},
+		#{dataSourceKey},
+		#{lastSyncDate}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE m_internal_po SET
+		company_id = #{companyId},
+		company_no = #{companyNo},
+		company_name = #{companyName},
+		org_id = #{orgId},
+		org_code = #{orgCode},
+		org_name = #{orgName},
+		po_number = #{poNumber},
+		remarks = #{remarks},
+		creation_date = #{creationDate},
+		last_update_date = #{lastUpdateDate},
+		data_source = #{dataSource},
+		data_source_key = #{dataSourceKey},
+		last_sync_date = #{lastSyncDate}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		DELETE FROM m_internal_po
+		WHERE id = #{id}
+	</update>
+
+</mapper>

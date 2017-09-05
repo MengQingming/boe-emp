@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boe.sysmgr.dao.UserDao">
+
+
+	<sql id="userColumns">
+		a.id,
+		a.user_num,
+		a.user_name,
+		a.full_name,
+		a.rank_code,
+		a.rank_name,
+		a.password,
+		a.last_password_date,
+		a.email,
+		a.phone,
+		a.mobile,
+		a.photo,
+		a.fax,
+		a.display_order,
+		a.status,
+		a.del_flag,
+		a.start_date,
+		a.end_date,
+		a.language AS lang,
+		a.remarks,
+		a.attribute1,
+		a.attribute2,
+		a.attribute3,
+		a.attribute4,
+		a.attribute5,
+		a.attribute6,
+		a.attribute7,
+		a.attribute8,
+		a.attribute9,
+		a.attribute10,
+		a.last_login_ip,
+		a.last_login_date,
+		a.data_source,
+		a.data_source_key,
+		a.last_sync_date,
+		a.creation_date,
+		a.last_update_date,
+		a.home_city_code,
+		a.home_city_name,
+		a.working_city_code,
+		a.working_city_name,
+		a.posted_city_code,
+		a.posted_city_name,
+		a.company_name AS
+		"company.companyName",
+		a.company_id AS "company.id",
+		a.company_no AS
+		"company.companyNo",
+		g.group_name AS "group.groupName",
+		g.group_short_name AS "group.groupShortName",
+		g.group_path AS
+		"group.groupPath",
+		g.group_type AS "group.groupType",
+		g.parent_id AS
+		"group.parent.id",
+		g.parent_id AS "group.parentId",
+		g.id AS "group.id",
+		g.id AS groupId,
+		g.area_id AS "group.area.id",
+		g.group_no AS
+		"group.groupNo",
+		g.BUSINESS_LINE_CODE AS "group.businessLineCode",
+		g.BUSINESS_LINE_NAME AS "group.businessLineName",
+		ug.relation_type AS
+		"group.relationType",
+		ug.manager_ID AS "group.leaderId",
+		ug.manager_num
+		AS "group.leaderNum",
+		ug.manager_name AS "group.leaderName",
+		a.POSITION_CODE AS "positionCode",
+		a.POSITION_NAME AS "positionName",
+		a.USER_TYPE_CODE AS "userTypeCode",
+		a.USER_TYPE_NAME AS "userTypeName",
+		a.ALLOWANCE_LEVEL_CODE AS "allowanceLevelCode",
+		a.allowance_Level_Name AS "allowanceLevelName"
+	</sql>
+
+	<sql id="onlyUserColumns">
+		a.id,
+		a.user_num,
+		a.user_name,
+		a.full_name,
+		a.rank_code,
+		a.rank_name,
+		a.password,
+		a.last_password_date,
+		a.email,
+		a.phone,
+		a.mobile,
+		a.photo,
+		a.fax,
+		a.display_order,
+		a.status,
+		a.del_flag,
+		a.start_date,
+		a.end_date,
+		a.language AS lang,
+		a.remarks,
+		a.attribute1,
+		a.attribute2,
+		a.attribute3,
+		a.attribute4,
+		a.attribute5,
+		a.attribute6,
+		a.attribute7,
+		a.attribute8,
+		a.attribute9,
+		a.attribute10,
+		a.last_login_ip,
+		a.last_login_date,
+		a.data_source,
+		a.data_source_key,
+		a.last_sync_date,
+		a.creation_date,
+		a.last_update_date,
+		a.home_city_code,
+		a.home_city_name,
+		a.working_city_code,
+		a.working_city_name,
+		a.posted_city_code,
+		a.posted_city_name,
+		a.company_name AS
+		"company.companyName",
+		a.company_id AS "company.id",
+		a.company_no AS "company.companyNo",
+		a.POSITION_CODE AS "positionCode",
+		a.POSITION_NAME AS "positionName",
+		a.USER_TYPE_CODE AS "userTypeCode",
+		a.USER_TYPE_NAME AS "userTypeName",
+		a.ALLOWANCE_LEVEL_CODE AS "allowanceLevelCode",
+		a.allowance_Level_Name AS "allowanceLevelName"
+	</sql>
+
+
+	<sql id="userJoins">
+		LEFT JOIN sys_user_group ug ON ug.user_id = a.id
+		LEFT JOIN
+		sys_group g ON g.id = ug.group_id
+	</sql>
+
+	<!-- 根据编号获得用户 -->
+	<select id="get" resultType="User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+		<include refid="userJoins" />
+
+		WHERE a.id = #{id} AND (a.id=1 or ug.relation_type='F')
+
+	</select>
+
+	<!-- 根据登录名查询用户 -->
+	<select id="getByUserName" resultType="User" parameterType="User">
+		SELECT
+		<include refid="userColumns" />  <!-- , ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins" />
+		WHERE a.user_name = #{userName} AND a.del_flag = #{DEL_FLAG_NORMAL}
+		AND (a.id=1 or ug.relation_type='F')
+
+	</select>
+
+	<!-- 根据员工号查询用户 -->
+	<select id="getOnlyByUserNum" resultType="User" parameterType="User">
+		SELECT
+		<include refid="onlyUserColumns" />
+		FROM sys_user a
+		WHERE a.user_num = #{userNum} AND a.del_flag =
+		#{DEL_FLAG_NORMAL}
+	</select>
+
+	<select id="getByUserNum" resultType="User" parameterType="User">
+		SELECT
+		<include refid="userColumns" />  <!-- , ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins" />
+		WHERE a.user_num = #{userNum} AND a.del_flag = #{DEL_FLAG_NORMAL} AND
+		(a.id=1 or ug.relation_type='F')
+	</select>
+
+	<!-- 根据登录名查询用户 -->
+	<select id="findByRoleId" resultType="User">
+		SELECT
+		<include refid="userColumns" />
+
+		FROM sys_user a
+		<include refid="userJoins" />
+
+		LEFT JOIN sys_user_role ur ON ur.user_id = a.id
+
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} and ur.role_id = #{role.id}
+
+		<if test="userName != null and userName != ''">
+			AND a.user_name = #{userName}
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.creation_date desc
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 分页查询用户信息 -->
+	<select id="findList" resultType="User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+
+		<include refid="userJoins" />
+
+		<if test="role != null and role.id != null and role.id!=''">
+			LEFT JOIN sys_user_role ur ON ur.user_id = a.id
+		</if>
+
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="!currentUser.admin">
+			AND a.id != '1'
+			<if
+				test="currentUser!=null and currentUser.company!=null and currentUser.company.id!=null">
+				AND a.company_id = #{currentUser.company.id}
+			</if>
+		</if>
+		<!-- 如果角色不为空 -->
+		<if test="role != null and role.id != null and role.id!=''">
+			AND ur.role_id = #{role.id}
+		</if>
+		<if test="userName != null and userName != ''">
+			AND a.user_name like
+			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{userName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{userName}, '%')</if>
+		</if>
+		<if test="fullName != null and fullName != ''">
+			AND a.full_name like
+			<if test="dbName == 'oracle'">'%'||#{fullName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{fullName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{fullName}, '%')</if>
+		</if>
+		<if test="company != null and company.id != null and company.id != ''">
+			AND a.company_id = #{company.id}
+		</if>
+		<!-- <if test="group != null and group.id != null and group.id != ''"> 
+			AND (g.id = #{group.id} OR g.group_path LIKE <if test="dbName == 'oracle'">'%'||#{group.groupPath}||'%')</if> 
+			<if test="dbName == 'mssql'">'%'+#{group.groupPath}+'%')</if> <if test="dbName 
+			== 'mysql'">CONCAT('%', #{group.groupPath}, '%'))</if> </if> -->
+		<if test="group != null and group.id != null and group.id != ''">
+			AND g.id = #{group.id}
+		</if>
+		<if test="group == null or group.id == null or group.id == ''">
+			AND ug.relation_type='F'
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY g.id,a.user_num
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 分页查询用户信息 -->
+	<select id="findListLL" resultType="User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+
+		<include refid="userJoins" />
+
+		<if test="role != null and role.id != null and role.id!=''">
+			LEFT JOIN sys_user_role ur ON ur.user_id = a.id
+		</if>
+
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="!currentUser.admin">
+			AND a.id != '1'
+			AND a.company_id =
+			#{currentUser.company.id}
+		</if>
+		<!-- 如果角色不为空 -->
+		<if test="role != null and role.id != null and role.id!=''">
+			AND ur.role_id = #{role.id}
+		</if>
+		<if test="userName != null and userName != ''">
+			AND a.user_name like
+			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{userName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{userName}, '%')</if>
+		</if>
+		<if test="fullName != null and fullName != ''">
+			AND a.full_name like
+			<if test="dbName == 'oracle'">'%'||#{fullName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{fullName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{fullName}, '%')</if>
+		</if>
+		<if test="company != null and company.id != null and company.id != ''">
+			AND a.company_id = #{company.id}
+		</if>
+		<!-- <if test="group != null and group.id != null and group.id != ''"> 
+			AND (g.id = #{group.id} OR g.group_path LIKE <if test="dbName == 'oracle'">'%'||#{group.groupPath}||'%')</if> 
+			<if test="dbName == 'mssql'">'%'+#{group.groupPath}+'%')</if> <if test="dbName 
+			== 'mysql'">CONCAT('%', #{group.groupPath}, '%'))</if> </if> -->
+		<if test="group != null and group.groupPath != null and group.id != ''">
+			AND g.group_path like '%'||#{group.groupPath}||'%'
+		</if>
+		<if test="group == null or group.id == null or group.id == ''">
+			AND ug.relation_type='F'
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY g.id,a.user_num
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 根据OfficeId获取用户（树查询用户时用） -->
+	<select id="findUserByGroupId" resultType="User" useCache="true">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+		<include refid="userJoins" />
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="group !=null and group.id != null and group.id != ''">
+			AND ug.group_id = #{group.id}
+		</if>
+		ORDER BY a.full_name
+	</select>
+
+	<!-- 查询全部用户 -->
+	<select id="findAllList" resultType="User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND
+		ug.relation_type='F'
+		<if test="!currentUser.admin">
+			AND a.company_id = #{currentUser.company.id}
+		</if>
+		ORDER BY a.full_name
+	</select>
+
+	<!-- 查询全部用户数目 -->
+	<select id="findAllCount" resultType="long">
+		SELECT
+		COUNT(1)
+		FROM
+		sys_user a
+		<include refid="userJoins" />
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND ug.relation_type='F'
+		<if test="!currentUser.admin">
+			AND a.company_id = #{currentUser.company.id}
+		</if>
+	</select>
+
+	<!-- 根据用户和角色查询是否有数据 -->
+	<select id="findUserAndRole" resultType="long">
+		SELECT
+		COUNT(1)
+		FROM
+		sys_user_role a
+
+		WHERE a.user_id =#{id} and a.role_id=#{role.id}
+
+	</select>
+
+	<!-- 根据角色ID查询是否有用户 -->
+	<select id="findRoleAndGroup" resultType="User">
+		SELECT
+		A.USER_ID AS ID
+		FROM
+		SYS_USER_ROLE A
+
+		WHERE A.USER_ID IS NOT NULL AND A.ROLE_ID=#{role.id} AND
+		INSTR(A.GROUP_PATH,#{group.id})>0 AND ROWNUM <![CDATA[<]]>
+		2
+		ORDER BY A.GROUP_PATH DESC
+	</select>
+
+	<select id="findListByPeriod" resultType="User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+		<include refid="userJoins" />
+		where (a.user_name='admin' or ug.relation_type='F')
+		<if test="startDate != null and startDate != ''">
+			AND a.LAST_SYNC_DATE <![CDATA[>=]]>#{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND a.LAST_SYNC_DATE <![CDATA[<=]]>#{endDate}
+		</if>
+	</select>
+
+	<!-- 插入用户 -->
+	<insert id="insert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select
+			SEQ_USER.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO sys_user(
+		id,
+		user_name,
+		user_num,
+		full_name,
+		rank_code,
+		rank_name,
+		password,
+		last_password_date,
+		email,
+		phone,
+		mobile,
+		photo,
+		fax,
+		display_order,
+		status,
+		del_flag,
+		start_date,
+		end_date,
+		POSITION_CODE,
+		POSITION_NAME,
+		USER_TYPE_CODE,
+		USER_TYPE_NAME,
+		ALLOWANCE_LEVEL_CODE,
+		allowance_Level_Name,
+		language,
+		remarks,
+		attribute1,
+		attribute2,
+		attribute3,
+		attribute4,
+		attribute5,
+		attribute6,
+		attribute7,
+		attribute8,
+		attribute9,
+		attribute10,
+		last_login_ip,
+		last_login_date,
+		data_source,
+		data_source_key,
+		last_sync_date,
+		creation_date,
+		last_update_date,
+		company_id,
+		company_no,
+		company_name,
+		home_city_code,
+		home_city_name,
+		working_city_code,
+		working_city_name,
+		posted_city_code,
+		posted_city_name
+		) VALUES (
+		#{id},
+		#{userName},
+		#{userNum},
+		#{fullName},
+		#{rankCode},
+		#{rankName},
+		#{password},
+		#{lastPasswordDate},
+		#{email},
+		#{phone},
+		#{mobile},
+		#{photo},
+		#{fax},
+		#{displayOrder},
+		#{status},
+		#{delFlag},
+		#{startDate},
+		#{endDate},
+		#{positionCode},
+		#{positionName},
+		#{userTypeCode},
+		#{userTypeName},
+		#{allowanceLevelName},
+		#{allowanceLevelCode},
+		#{lang},
+		#{remarks},
+		#{attribute1},
+		#{attribute2},
+		#{attribute3},
+		#{attribute4},
+		#{attribute5},
+		#{attribute6},
+		#{attribute7},
+		#{attribute8},
+		#{attribute9},
+		#{attribute10},
+		#{lastLoginIp},
+		#{lastLoginDate},
+		#{dataSource},
+		#{dataSourceKey},
+		#{lastSyncDate},
+		#{creationDate},
+		#{lastUpdateDate},
+		#{company.id},
+		#{company.companyNo},
+		#{company.companyName},
+		#{homeCityCode},
+		#{homeCityName},
+		#{workingCityCode},
+		#{workingCityName},
+		#{postedCityCode},
+		#{postedCityName}
+		)
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update">
+		UPDATE sys_user SET
+		user_name = #{userName},
+		full_name
+		= #{fullName},
+		rank_code = #{rankCode},
+		rank_name = #{rankName},
+		email = #{email},
+		phone =
+		#{phone},
+		mobile = #{mobile},
+		photo = #{photo},
+		fax = #{fax},
+		status =
+		#{status},
+		language = #{lang},
+		password = #{password},
+		last_password_date = #{lastPasswordDate},
+		last_update_date =
+		#{lastUpdateDate},
+		remarks = #{remarks},
+		company_id = #{company.id},
+		company_no = #{company.companyNo},
+		company_name =
+		#{company.companyName},
+		home_city_code = #{homeCityCode},
+		home_city_name = #{homeCityName},
+		working_city_code =
+		#{workingCityCode},
+		working_city_name = #{workingCityName},
+		posted_city_code = #{postedCityCode},
+		posted_city_name = #{postedCityName},
+		POSITION_CODE = #{positionCode},
+		POSITION_NAME = #{positionName},
+		USER_TYPE_CODE = #{userTypeCode},
+		USER_TYPE_NAME = #{userTypeName},
+		ALLOWANCE_LEVEL_CODE = #{allowanceLevelCode},
+		allowance_Level_Name = #{allowanceLevelName}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 删除用户和角色关联表数据 -->
+	<delete id="deleteUserRole">
+		DELETE FROM sys_user_role WHERE user_id = #{id}
+	</delete>
+
+	<!-- 移除角色和角色的关联数据 -->
+	<delete id="deleteUserAndRole">
+		DELETE FROM sys_user_role WHERE user_id = #{id} AND
+		role_id=#{role.id}
+	</delete>
+
+	<!-- 删除用户和组织机构关联表数据 -->
+	<delete id="deleteUserFGroup">
+		DELETE FROM sys_user_group WHERE user_id = #{id} AND
+		relation_type ='F'
+	</delete>
+	<!-- 删除用户和组织机构关联表数据 -->
+	<delete id="deleteUserPGroup">
+		DELETE FROM sys_user_group WHERE user_id = #{id} AND relation_type
+		='P'
+		<if test="group!=null and group.id!=null and group.id!=''">
+			AND group_id = #{group.id}
+		</if>
+	</delete>
+
+	<!-- 插入用户和角色关联表数据 -->
+	<insert id="insertUserRole">
+		INSERT INTO sys_user_role(
+		id,
+		user_id,
+		role_id,
+		GROUP_NO,
+		GROUP_PATH,
+		USER_NAME,
+		ROLE_NO,
+		ROLE_TYPE,
+		COMPANY_ID,
+		COMPANY_NO,
+		COMPANY_NAME
+		)
+		select SEQ_USER_ROLE.NEXTVAL,A.* FROM(
+		<foreach collection="roleList" item="role" separator=" union all ">
+			SELECT
+			#{id}, #{role.id},
+			#{group.groupNo},
+			#{group.groupPath},
+			#{userName},
+			#{role.roleNo},
+			#{role.roleType},
+			#{company.id},
+			#{company.companyNo},
+			#{company.companyName} FROM dual
+		</foreach>
+		) A
+	</insert>
+
+	<!-- 给角色追加用户 -->
+	<insert id="insertRoleUser">
+		INSERT INTO sys_user_role (
+		id,
+		user_id,
+		role_id,
+		GROUP_NO,
+		GROUP_PATH,
+		USER_NAME,
+		ROLE_NO,
+		ROLE_TYPE,
+		COMPANY_ID,
+		COMPANY_NO,
+		COMPANY_NAME
+		) VALUES(
+		SEQ_USER_ROLE.NEXTVAL,
+		#{id},
+		#{role.id},
+		#{group.groupNo},
+		#{group.groupPath},
+		#{userName},
+		#{role.roleNo},
+		#{role.roleType},
+		#{company.id},
+		#{company.companyNo},
+		#{company.companyName}
+		)
+	</insert>
+
+	<!-- 插入用户兼职组织机构关联表数据 -->
+	<insert id="insertUserPGroup">
+		INSERT INTO sys_user_group (id,user_id,
+		group_id,relation_type,company_id,company_no,company_name,group_no,group_path)
+		select SEQ_USER_GROUP.NEXTVAL,A.* FROM(
+		<foreach collection="groupList" item="group" separator=" union all ">
+			SELECT
+			#{id},
+			#{group.id},'P',#{group.companyId},#{group.companyNo},#{group.companyName},#{group.groupNo},#{group.groupPath}
+			FROM dual
+		</foreach>
+		) A
+	</insert>
+	<!-- 插入用户全职组织机构关联表数据 -->
+	<insert id="insertUserFGroup">
+		<selectKey keyProperty="userRoleId" resultType="int" order="BEFORE">
+			select SEQ_USER_GROUP.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO sys_user_group (
+		id,
+		user_id,
+		user_num,
+		user_name,
+		group_id,
+		company_id,
+		company_no,
+		company_name,
+		group_no,
+		group_path,
+		relation_type
+		) VALUES (
+		#{userRoleId},
+		#{id},
+		#{userNum},
+		#{userName},
+		#{group.id},
+		#{group.companyId},
+		#{group.companyNo},
+		#{group.companyName},
+		#{group.groupNo},
+		#{group.groupPath},
+		'F'
+		)
+	</insert>
+
+	<!-- 更新用户信息 -->
+	<update id="updateUserInfo">
+		UPDATE sys_user SET
+		email = #{email},
+		phone = #{phone},
+		mobile = #{mobile},
+		last_update_date = #{lastUpdateDate},
+		remarks =
+		#{remarks},
+		photo = #{photo}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 更新用户密码 -->
+	<update id="updatePasswordById">
+		UPDATE sys_user SET
+		password = #{password},
+		last_password_date = #{lastPasswordDate}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 更新登录信息，如登录IP、登录时间 -->
+	<update id="updateLoginInfo">
+		UPDATE sys_user SET
+		last_login_ip = #{lastLoginIp},
+		last_login_date = #{lastLoginDate}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 逻辑删除用户 -->
+	<update id="delete">
+		UPDATE sys_user SET
+		del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 根据登录名查询用户 -->
+	<select id="findUserGroupInfo" resultType="User" parameterType="User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+		<include refid="userJoins" />
+		WHERE a.id = #{id}
+	</select>
+
+
+	<select id="queryByGroup" resultType="User">
+		SELECT
+		<include refid="userColumns" />  <!-- , ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins" />
+		WHERE a.del_flag = 1 AND (a.id=1 or ug.relation_type='F')
+		and
+		ug.group_id = #{0}
+	</select>
+
+	<update id="udapteLeader">
+		UPDATE sys_user_group SET
+		MANAGER_NUM = #{parentNum},
+		MANAGER_ID = #{parentId},
+		MANAGER_NAME = #{parentFullName}
+		WHERE user_id
+		= #{id} and group_id=#{groupId}
+	</update>
+	<select id="findUserGroupCount" resultType="long">
+		SELECT
+		COUNT(1)
+		FROM
+		sys_user_group a
+
+		WHERE a.user_id =#{id} and a.group_id=#{groupId}
+
+	</select>
+	
+	<!-- 根据角色查询用户Id -->
+	<select id="findUserIdByRoleId" resultType="String">
+		SELECT
+		a.user_id
+		FROM
+		sys_user_role a
+
+		WHERE a.role_id=#{role.id}
+
+	</select>
+
+	<!-- 分页查询用户信息 -->
+	<select id="findListOrderByUserNum" resultType="User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+
+		<include refid="userJoins" />
+
+		<if test="role != null and role.id != null and role.id!=''">
+			LEFT JOIN sys_user_role ur ON ur.user_id = a.id
+		</if>
+
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="!currentUser.admin">
+			AND a.id != '1'
+			<if
+					test="currentUser!=null and currentUser.company!=null and currentUser.company.id!=null">
+				AND a.company_id = #{currentUser.company.id}
+			</if>
+		</if>
+		<!-- 如果角色不为空 -->
+		<if test="role != null and role.id != null and role.id!=''">
+			AND ur.role_id = #{role.id}
+		</if>
+		<if test="userName != null and userName != ''">
+			AND a.user_name like
+			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{userName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{userName}, '%')</if>
+		</if>
+		<if test="fullName != null and fullName != ''">
+			AND a.full_name like
+			<if test="dbName == 'oracle'">'%'||#{fullName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{fullName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{fullName}, '%')</if>
+		</if>
+		<if test="company != null and company.id != null and company.id != ''">
+			AND a.company_id = #{company.id}
+		</if>
+
+		<if test="group != null and group.id != null and group.id != ''">
+			AND g.id = #{group.id}
+		</if>
+		<if test="group == null or group.id == null or group.id == ''">
+			AND ug.relation_type='F'
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.user_num ASC
+			</otherwise>
+		</choose>
+	</select>
+</mapper>
